@@ -69,71 +69,175 @@
     <script>
     window.onload = function() {
         const T = { backgroundColor:'rgba(30,41,59,0.9)', borderColor:'rgba(255,255,255,0.1)', borderWidth:1, textStyle:{color:'#f1f5f9'} };
-        const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
         const axisStyle = { axisLine:{lineStyle:{color:'rgba(255,255,255,0.1)'}}, axisLabel:{color:'#94a3b8'} };
         const splitStyle = { splitLine:{lineStyle:{color:'rgba(255,255,255,0.05)',type:'dashed'}} };
 
-        // 核心指标趋势
+        // ===== 各维度数据 =====
+        const DATA = {
+            '月': {
+                xAxis: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+                trendTitle: '核心指标月度趋势', alertTitle: '黄灯/红灯患者趋势',
+                metrics: [
+                    { label:'新入组数', value:'1,245', change:'↑ 12.5%', dir:'positive' },
+                    { label:'首周期完成率', value:'87.3%', change:'↑ 3.2%', dir:'positive' },
+                    { label:'第3周期完成率', value:'65.8%', change:'↑ 2.1%', dir:'positive' },
+                    { label:'5周期持续治疗率', value:'42.1%', change:'↓ 1.5%', dir:'negative' },
+                    { label:'失访率', value:'12.5%', change:'↓ 0.8%', dir:'negative' },
+                    { label:'黄灯患者占比', value:'18.2%', change:'↑ 1.3%', dir:'negative', cls:'warning' },
+                    { label:'红灯患者占比', value:'6.7%', change:'↑ 0.5%', dir:'negative', cls:'danger' },
+                    { label:'AE 上报量', value:'196', change:'↑ 8.3%', dir:'positive' }
+                ],
+                trend: {
+                    s1:[78,79,81,82,84,85,86,86.5,87,87.2,87.3,87.3],
+                    s2:[52,54,56,57,59,60,62,63,64,65,65.5,65.8],
+                    s3:[16,15.5,15,14.8,14.2,13.8,13.5,13.2,13,12.8,12.6,12.5],
+                    s4:[35,36,37,38,39,39.5,40,40.5,41,41.5,41.8,42.1]
+                },
+                pie:[{v:42.1,n:'持续治疗'},{v:35.4,n:'已完成'},{v:12.5,n:'失访'},{v:6.7,n:'红灯'},{v:3.3,n:'中断'}],
+                radar:{cur:[12.5,8.3,8.3,6.7,18.2,15.5], tgt:[10,6,7,5,15,12]},
+                alert:{y:[15,15.5,16,16.2,16.8,17,17.3,17.5,17.8,18,18.1,18.2], r:[4.5,4.8,5,5.2,5.5,5.7,5.9,6,6.2,6.4,6.5,6.7]}
+            },
+            '周': {
+                xAxis: ['第1周','第2周','第3周','第4周'],
+                trendTitle: '核心指标周度趋势', alertTitle: '黄灯/红灯患者周趋势',
+                metrics: [
+                    { label:'新入组数', value:'312', change:'↑ 5.7%', dir:'positive' },
+                    { label:'首周期完成率', value:'88.1%', change:'↑ 0.8%', dir:'positive' },
+                    { label:'第3周期完成率', value:'66.2%', change:'↑ 0.4%', dir:'positive' },
+                    { label:'5周期持续治疗率', value:'42.5%', change:'↑ 0.4%', dir:'positive' },
+                    { label:'失访率', value:'11.8%', change:'↓ 0.7%', dir:'negative' },
+                    { label:'黄灯患者占比', value:'17.9%', change:'↓ 0.3%', dir:'positive', cls:'warning' },
+                    { label:'红灯患者占比', value:'6.5%', change:'↓ 0.2%', dir:'positive', cls:'danger' },
+                    { label:'AE 上报量', value:'48', change:'↑ 2.1%', dir:'positive' }
+                ],
+                trend: {
+                    s1:[86.8,87,87.5,88.1],
+                    s2:[65.2,65.6,65.9,66.2],
+                    s3:[12.8,12.4,12.1,11.8],
+                    s4:[41.8,42,42.2,42.5]
+                },
+                pie:[{v:42.5,n:'持续治疗'},{v:35.8,n:'已完成'},{v:11.8,n:'失访'},{v:6.5,n:'红灯'},{v:3.4,n:'中断'}],
+                radar:{cur:[11.8,7.9,7.8,6.5,17.9,14.2], tgt:[10,6,7,5,15,12]},
+                alert:{y:[18.2,18,17.9,17.9], r:[6.7,6.6,6.5,6.5]}
+            },
+            '日': {
+                xAxis: ['04-18','04-19','04-20','04-21','04-22','04-23','04-24'],
+                trendTitle: '核心指标日趋势', alertTitle: '黄灯/红灯患者日趋势',
+                metrics: [
+                    { label:'新入组数', value:'45', change:'↑ 8.2%', dir:'positive' },
+                    { label:'首周期完成率', value:'89.2%', change:'↑ 1.1%', dir:'positive' },
+                    { label:'第3周期完成率', value:'67.1%', change:'↑ 0.9%', dir:'positive' },
+                    { label:'5周期持续治疗率', value:'43.0%', change:'↑ 0.5%', dir:'positive' },
+                    { label:'失访率', value:'11.2%', change:'↓ 0.6%', dir:'negative' },
+                    { label:'黄灯患者占比', value:'17.5%', change:'↓ 0.4%', dir:'positive', cls:'warning' },
+                    { label:'红灯患者占比', value:'6.3%', change:'↓ 0.2%', dir:'positive', cls:'danger' },
+                    { label:'AE 上报量', value:'7', change:'↑ 1.0%', dir:'positive' }
+                ],
+                trend: {
+                    s1:[87.5,87.8,88,88.4,88.7,89,89.2],
+                    s2:[65.8,66,66.3,66.5,66.7,66.9,67.1],
+                    s3:[12.2,12,11.8,11.6,11.5,11.3,11.2],
+                    s4:[42.1,42.3,42.5,42.6,42.7,42.9,43]
+                },
+                pie:[{v:43,n:'持续治疗'},{v:36,n:'已完成'},{v:11.2,n:'失访'},{v:6.3,n:'红灯'},{v:3.5,n:'中断'}],
+                radar:{cur:[11.2,7.5,7.2,6.3,17.5,13.5], tgt:[10,6,7,5,15,12]},
+                alert:{y:[17.9,17.8,17.7,17.6,17.5,17.5,17.5], r:[6.5,6.5,6.4,6.4,6.3,6.3,6.3]}
+            }
+        };
+
+        const colors = ['#38bdf8','#10b981','#f59e0b','#8b5cf6','#f43f5e','#f59e0b','#f43f5e','#06b6d4'];
+        const pieColors = ['#38bdf8','#10b981','#f43f5e','#ef4444','#f59e0b'];
+
+        // 初始化图表
         const c1 = echarts.init(document.getElementById('trendChart'));
-        c1.setOption({
-            tooltip:{trigger:'axis',...T}, legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
-            grid:{left:'3%',right:'3%',bottom:'8%',top:'18%',containLabel:true},
-            xAxis:{type:'category',data:months,...axisStyle},
-            yAxis:{type:'value',axisLabel:{formatter:'{value}%',color:'#94a3b8'},...splitStyle},
-            series:[
-                {name:'首周期完成率',type:'line',smooth:true,data:[78,79,81,82,84,85,86,86.5,87,87.2,87.3,87.3],lineStyle:{width:3,color:'#10b981'},itemStyle:{color:'#10b981'},symbol:'circle',symbolSize:6},
-                {name:'第3周期完成率',type:'line',smooth:true,data:[52,54,56,57,59,60,62,63,64,65,65.5,65.8],lineStyle:{width:3,color:'#f59e0b'},itemStyle:{color:'#f59e0b'},symbol:'circle',symbolSize:6},
-                {name:'失访率',type:'line',smooth:true,data:[16,15.5,15,14.8,14.2,13.8,13.5,13.2,13,12.8,12.6,12.5],lineStyle:{width:3,color:'#f43f5e'},itemStyle:{color:'#f43f5e'},symbol:'circle',symbolSize:6},
-                {name:'5周期治疗率',type:'line',smooth:true,data:[35,36,37,38,39,39.5,40,40.5,41,41.5,41.8,42.1],lineStyle:{width:3,color:'#8b5cf6'},itemStyle:{color:'#8b5cf6'},symbol:'circle',symbolSize:6}
-            ]
-        });
-
-        // 患者状态分布
         const c2 = echarts.init(document.getElementById('statusChart'));
-        c2.setOption({
-            tooltip:{trigger:'item',...T}, legend:{bottom:0,textStyle:{color:'#94a3b8'},icon:'circle'},
-            series:[{type:'pie',radius:['45%','70%'],center:['50%','45%'],avoidLabelOverlap:false,
-                itemStyle:{borderRadius:8,borderColor:'#1e293b',borderWidth:3},label:{show:false},
-                emphasis:{label:{show:true,fontSize:16,fontWeight:'bold',color:'#f1f5f9'}},
-                data:[
-                    {value:42.1,name:'持续治疗',itemStyle:{color:'#38bdf8'}},
-                    {value:35.4,name:'已完成',itemStyle:{color:'#10b981'}},
-                    {value:12.5,name:'失访',itemStyle:{color:'#f43f5e'}},
-                    {value:6.7,name:'红灯',itemStyle:{color:'#ef4444'}},
-                    {value:3.3,name:'中断',itemStyle:{color:'#f59e0b'}}
-                ]
-            }]
-        });
-
-        // 异常预警雷达
         const c3 = echarts.init(document.getElementById('radarChart'));
-        c3.setOption({
-            tooltip:{...T},
-            radar:{indicator:[
-                {name:'失访率',max:30},{name:'AE发生率',max:20},{name:'脱落率',max:20},
-                {name:'红灯占比',max:15},{name:'黄灯占比',max:30},{name:'超时率',max:25}
-            ],axisName:{color:'#94a3b8',fontSize:11},splitArea:{areaStyle:{color:['rgba(56,189,248,0.02)','rgba(56,189,248,0.04)']}},
-            splitLine:{lineStyle:{color:'rgba(255,255,255,0.08)'}},axisLine:{lineStyle:{color:'rgba(255,255,255,0.08)'}}},
-            series:[{type:'radar',data:[{value:[12.5,8.3,8.3,6.7,18.2,15.5],name:'当前值',
-                areaStyle:{color:'rgba(244,63,94,0.15)'},lineStyle:{color:'#f43f5e',width:2},itemStyle:{color:'#f43f5e'}},
-                {value:[10,6,7,5,15,12],name:'目标值',lineStyle:{color:'#10b981',width:2,type:'dashed'},itemStyle:{color:'#10b981'},areaStyle:{color:'rgba(16,185,129,0.08)'}}
-            ]}]
+        const c4 = echarts.init(document.getElementById('alertChart'));
+
+        function renderAll(dim) {
+            const d = DATA[dim];
+
+            // 更新指标卡
+            const cards = document.querySelectorAll('.metric-card');
+            d.metrics.forEach((m, i) => {
+                if (!cards[i]) return;
+                cards[i].className = 'metric-card' + (m.cls ? ' ' + m.cls : '');
+                cards[i].querySelector('.label').textContent = m.label;
+                cards[i].querySelector('.value').textContent = m.value;
+                const ch = cards[i].querySelector('.change');
+                ch.textContent = m.change;
+                ch.className = 'change ' + m.dir;
+            });
+
+            // 更新图表标题
+            document.querySelectorAll('.chart-container h3')[0].textContent = d.trendTitle;
+            document.querySelectorAll('.chart-container h3')[3].textContent = d.alertTitle;
+
+            // 趋势图
+            c1.setOption({
+                tooltip:{trigger:'axis',...T}, legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
+                grid:{left:'3%',right:'3%',bottom:'8%',top:'18%',containLabel:true},
+                xAxis:{type:'category',data:d.xAxis,...axisStyle},
+                yAxis:{type:'value',axisLabel:{formatter:'{value}%',color:'#94a3b8'},...splitStyle},
+                series:[
+                    {name:'首周期完成率',type:'line',smooth:true,data:d.trend.s1,lineStyle:{width:3,color:'#10b981'},itemStyle:{color:'#10b981'},symbol:'circle',symbolSize:6},
+                    {name:'第3周期完成率',type:'line',smooth:true,data:d.trend.s2,lineStyle:{width:3,color:'#f59e0b'},itemStyle:{color:'#f59e0b'},symbol:'circle',symbolSize:6},
+                    {name:'失访率',type:'line',smooth:true,data:d.trend.s3,lineStyle:{width:3,color:'#f43f5e'},itemStyle:{color:'#f43f5e'},symbol:'circle',symbolSize:6},
+                    {name:'5周期治疗率',type:'line',smooth:true,data:d.trend.s4,lineStyle:{width:3,color:'#8b5cf6'},itemStyle:{color:'#8b5cf6'},symbol:'circle',symbolSize:6}
+                ]
+            }, true);
+
+            // 饼图
+            c2.setOption({
+                tooltip:{trigger:'item',...T}, legend:{bottom:0,textStyle:{color:'#94a3b8'},icon:'circle'},
+                series:[{type:'pie',radius:['45%','70%'],center:['50%','45%'],avoidLabelOverlap:false,
+                    itemStyle:{borderRadius:8,borderColor:'#1e293b',borderWidth:3},label:{show:false},
+                    emphasis:{label:{show:true,fontSize:16,fontWeight:'bold',color:'#f1f5f9'}},
+                    data:d.pie.map((p,i)=>({value:p.v,name:p.n,itemStyle:{color:pieColors[i]}}))
+                }]
+            }, true);
+
+            // 雷达图
+            c3.setOption({
+                tooltip:{...T},
+                radar:{indicator:[
+                    {name:'失访率',max:30},{name:'AE发生率',max:20},{name:'脱落率',max:20},
+                    {name:'红灯占比',max:15},{name:'黄灯占比',max:30},{name:'超时率',max:25}
+                ],axisName:{color:'#94a3b8',fontSize:11},splitArea:{areaStyle:{color:['rgba(56,189,248,0.02)','rgba(56,189,248,0.04)']}},
+                splitLine:{lineStyle:{color:'rgba(255,255,255,0.08)'}},axisLine:{lineStyle:{color:'rgba(255,255,255,0.08)'}}},
+                series:[{type:'radar',data:[
+                    {value:d.radar.cur,name:'当前值',areaStyle:{color:'rgba(244,63,94,0.15)'},lineStyle:{color:'#f43f5e',width:2},itemStyle:{color:'#f43f5e'}},
+                    {value:d.radar.tgt,name:'目标值',lineStyle:{color:'#10b981',width:2,type:'dashed'},itemStyle:{color:'#10b981'},areaStyle:{color:'rgba(16,185,129,0.08)'}}
+                ]}]
+            }, true);
+
+            // 黄灯红灯柱状图
+            c4.setOption({
+                tooltip:{trigger:'axis',...T}, legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
+                grid:{left:'3%',right:'3%',bottom:'8%',top:'18%',containLabel:true},
+                xAxis:{type:'category',data:d.xAxis,...axisStyle},
+                yAxis:{type:'value',axisLabel:{formatter:'{value}%',color:'#94a3b8'},...splitStyle},
+                series:[
+                    {name:'黄灯占比',type:'bar',stack:'alert',barWidth:'35%',data:d.alert.y,
+                        itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#f59e0b'},{offset:1,color:'rgba(245,158,11,0.2)'}]),borderRadius:[0,0,0,0]}},
+                    {name:'红灯占比',type:'bar',stack:'alert',barWidth:'35%',data:d.alert.r,
+                        itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#f43f5e'},{offset:1,color:'rgba(244,63,94,0.2)'}]),borderRadius:[4,4,0,0]}}
+                ]
+            }, true);
+        }
+
+        // Tab 切换
+        const tabs = document.querySelectorAll('.tab-bar .tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                renderAll(this.textContent.trim());
+            });
         });
 
-        // 黄灯/红灯趋势
-        const c4 = echarts.init(document.getElementById('alertChart'));
-        c4.setOption({
-            tooltip:{trigger:'axis',...T}, legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
-            grid:{left:'3%',right:'3%',bottom:'8%',top:'18%',containLabel:true},
-            xAxis:{type:'category',data:months,...axisStyle},
-            yAxis:{type:'value',axisLabel:{formatter:'{value}%',color:'#94a3b8'},...splitStyle},
-            series:[
-                {name:'黄灯占比',type:'bar',stack:'alert',barWidth:'35%',data:[15,15.5,16,16.2,16.8,17,17.3,17.5,17.8,18,18.1,18.2],
-                    itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#f59e0b'},{offset:1,color:'rgba(245,158,11,0.2)'}]),borderRadius:[0,0,0,0]}},
-                {name:'红灯占比',type:'bar',stack:'alert',barWidth:'35%',data:[4.5,4.8,5,5.2,5.5,5.7,5.9,6,6.2,6.4,6.5,6.7],
-                    itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#f43f5e'},{offset:1,color:'rgba(244,63,94,0.2)'}]),borderRadius:[4,4,0,0]}}
-            ]
-        });
+        // 初始渲染
+        renderAll('月');
 
         window.addEventListener('resize',()=>{c1.resize();c2.resize();c3.resize();c4.resize()});
     };
