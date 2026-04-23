@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据洞察分析 - 君实随访 BI</title>
+    <link rel="stylesheet" href="design-system.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>君实随访 BI</h2>
+        <ul class="menu">
+            <li class="menu-item"><a href="index.html"><span style="margin-right:10px">📊</span> Dashboard 看板</a></li>
+            <li class="menu-item"><a href="enrollment-analysis.html"><span style="margin-right:10px">📋</span> 入组分析</a></li>
+            <li class="menu-item"><a href="follow-up-analysis.html"><span style="margin-right:10px">📞</span> 随访分析</a></li>
+            <li class="menu-item"><a href="patient-analysis.html"><span style="margin-right:10px">👥</span> 患者分析</a></li>
+            <li class="menu-item"><a href="service-analysis.html"><span style="margin-right:10px">🛎️</span> 服务数据分析</a></li>
+            <li class="menu-item"><a href="safety-analysis.html"><span style="margin-right:10px">🛡️</span> 安全数据分析</a></li>
+            <li class="menu-item active"><a href="insight-analysis.html"><span style="margin-right:10px">💡</span> 数据洞察</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="header">
+                <h1>数据洞察分析</h1>
+                <div style="color:var(--text-muted);font-size:13px">智能分析报告 · 2026年4月</div>
+            </div>
+
+            <!-- 洞察卡片 -->
+            <div class="insight-grid">
+                <div class="insight-card">
+                    <div class="icon" style="background:rgba(56,189,248,0.15)">📈</div>
+                    <h4>病种趋势洞察</h4>
+                    <p>非小细胞肺癌入组量持续增长（+18.5%），已成为最大适应症群体。食管癌和鼻咽癌入组量稳步上升，建议加强对应区域的资源投放。</p>
+                    <span class="tag tag-up">↑ 增长趋势</span>
+                </div>
+                <div class="insight-card">
+                    <div class="icon" style="background:rgba(16,185,129,0.15)">💊</div>
+                    <h4>治疗效果洞察</h4>
+                    <p>首周期完成率（87.3%）已超目标值，但第3周期至第5周期存在显著衰减（87.3% → 42.1%），建议在第2-3周期增加患者关怀频次。</p>
+                    <span class="tag tag-neutral">需关注</span>
+                </div>
+                <div class="insight-card">
+                    <div class="icon" style="background:rgba(244,63,94,0.15)">⚠️</div>
+                    <h4>异常风险洞察</h4>
+                    <p>红灯患者占比连续3个月上升至6.7%，主要关联因素为「免疫相关不良反应」和「用药依从性差」。AE 上报时效已改善至平均15h。</p>
+                    <span class="tag tag-down">↑ 风险上升</span>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>AE 上报与脱落原因关联分析</h3>
+                    <div id="aeDropoutCorr" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>各周期完成率与治疗效果关联</h3>
+                    <div id="cycleEffect" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>失访率与黄灯/红灯关联趋势</h3>
+                    <div id="lossAlertCorr" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>病种维度综合评估雷达</h3>
+                    <div id="diseaseRadar" class="chart"></div>
+                </div>
+            </div>
+
+            <div class="footer"><p>© 2026 君实随访项目管理系统 · BI 专业版</p></div>
+        </div>
+    </div>
+
+    <script>
+    window.onload = function() {
+        const T = {backgroundColor:'rgba(30,41,59,0.9)',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,textStyle:{color:'#f1f5f9'}};
+        const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+        const ax = {axisLine:{lineStyle:{color:'rgba(255,255,255,0.1)'}},axisLabel:{color:'#94a3b8'}};
+        const sp = {splitLine:{lineStyle:{color:'rgba(255,255,255,0.05)',type:'dashed'}}};
+        const ins = [];
+
+        // AE与脱落关联 散点图
+        const c1=echarts.init(document.getElementById('aeDropoutCorr'));ins.push(c1);
+        c1.setOption({tooltip:{...T,formatter:function(p){return p.seriesName+'<br/>AE数: '+p.value[0]+'<br/>脱落率: '+p.value[1]+'%<br/>样本: '+p.value[2]}},
+            grid:{left:'6%',right:'6%',bottom:'10%',top:'10%',containLabel:true},
+            xAxis:{name:'AE 上报数',nameTextStyle:{color:'#94a3b8'},...ax,...sp},
+            yAxis:{name:'脱落率 (%)',nameTextStyle:{color:'#94a3b8'},axisLabel:{formatter:'{value}%',color:'#94a3b8'},...sp,
+                axisLine:{lineStyle:{color:'rgba(255,255,255,0.1)'}}},
+            series:[
+                {name:'非小细胞肺癌',type:'scatter',symbolSize:function(d){return Math.sqrt(d[2])*3},
+                    data:[[8,6.5,120],[12,8.2,95],[15,9.8,80],[18,11.5,65],[22,13.2,50]],
+                    itemStyle:{color:'#38bdf8',opacity:0.7}},
+                {name:'食管癌',type:'scatter',symbolSize:function(d){return Math.sqrt(d[2])*3},
+                    data:[[5,5.2,85],[9,7.5,70],[11,8.8,60],[14,10.2,45]],
+                    itemStyle:{color:'#10b981',opacity:0.7}},
+                {name:'鼻咽癌',type:'scatter',symbolSize:function(d){return Math.sqrt(d[2])*3},
+                    data:[[4,4.8,65],[7,6.2,55],[10,7.8,40],[13,9.5,30]],
+                    itemStyle:{color:'#f59e0b',opacity:0.7}}
+            ],legend:{textStyle:{color:'#94a3b8'},icon:'circle',bottom:0}
+        });
+
+        // 各周期完成率趋势
+        const c2=echarts.init(document.getElementById('cycleEffect'));ins.push(c2);
+        c2.setOption({tooltip:{trigger:'axis',...T},legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
+            grid:{left:'4%',right:'4%',bottom:'8%',top:'15%',containLabel:true},
+            xAxis:{type:'category',data:months,...ax},yAxis:{type:'value',axisLabel:{formatter:'{value}%',color:'#94a3b8'},...sp},
+            series:[
+                {name:'首周期',type:'line',smooth:true,data:[78,79,81,82,84,85,86,86.5,87,87.2,87.3,87.3],lineStyle:{width:3,color:'#10b981'},itemStyle:{color:'#10b981'},symbol:'circle',symbolSize:6,
+                    areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(16,185,129,0.15)'},{offset:1,color:'rgba(16,185,129,0)'}])}},
+                {name:'第3周期',type:'line',smooth:true,data:[52,54,56,57,59,60,62,63,64,65,65.5,65.8],lineStyle:{width:2,color:'#f59e0b'},itemStyle:{color:'#f59e0b'},symbol:'circle',symbolSize:5},
+                {name:'第5周期',type:'line',smooth:true,data:[35,36,37,38,39,39.5,40,40.5,41,41.5,41.8,42.1],lineStyle:{width:2,color:'#8b5cf6'},itemStyle:{color:'#8b5cf6'},symbol:'circle',symbolSize:5},
+                {name:'长期治疗',type:'line',smooth:true,data:[25,26,27,27.5,28,28.5,29,30,30.5,31,32,32.5],lineStyle:{width:2,color:'#f43f5e',type:'dashed'},itemStyle:{color:'#f43f5e'},symbol:'circle',symbolSize:5}
+            ]
+        });
+
+        // 失访率与黄灯/红灯关联 双轴图
+        const c3=echarts.init(document.getElementById('lossAlertCorr'));ins.push(c3);
+        c3.setOption({tooltip:{trigger:'axis',...T},legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
+            grid:{left:'4%',right:'8%',bottom:'8%',top:'15%',containLabel:true},
+            xAxis:{type:'category',data:months,...ax},
+            yAxis:[{type:'value',name:'占比(%)',nameTextStyle:{color:'#94a3b8'},axisLabel:{formatter:'{value}%',color:'#94a3b8'},...sp},
+                   {type:'value',name:'失访率(%)',nameTextStyle:{color:'#94a3b8'},axisLabel:{formatter:'{value}%',color:'#94a3b8'},splitLine:{show:false}}],
+            series:[
+                {name:'黄灯占比',type:'bar',barWidth:'25%',data:[15,15.5,16,16.2,16.8,17,17.3,17.5,17.8,18,18.1,18.2],
+                    itemStyle:{color:'rgba(245,158,11,0.6)',borderRadius:[4,4,0,0]}},
+                {name:'红灯占比',type:'bar',barWidth:'25%',data:[4.5,4.8,5,5.2,5.5,5.7,5.9,6,6.2,6.4,6.5,6.7],
+                    itemStyle:{color:'rgba(244,63,94,0.6)',borderRadius:[4,4,0,0]}},
+                {name:'失访率',type:'line',yAxisIndex:1,smooth:true,data:[16,15.5,15,14.8,14.2,13.8,13.5,13.2,13,12.8,12.6,12.5],
+                    lineStyle:{width:3,color:'#38bdf8'},itemStyle:{color:'#38bdf8'},symbol:'circle',symbolSize:6}
+            ]
+        });
+
+        // 病种综合雷达
+        const c4=echarts.init(document.getElementById('diseaseRadar'));ins.push(c4);
+        c4.setOption({tooltip:{...T},legend:{textStyle:{color:'#94a3b8'},icon:'circle',bottom:0},
+            radar:{indicator:[
+                {name:'入组量',max:100},{name:'首周期完成率',max:100},{name:'留存率',max:100},
+                {name:'满意度',max:100},{name:'AE控制',max:100},{name:'随访完成',max:100}
+            ],axisName:{color:'#94a3b8',fontSize:11},
+            splitArea:{areaStyle:{color:['rgba(56,189,248,0.02)','rgba(56,189,248,0.04)']}},
+            splitLine:{lineStyle:{color:'rgba(255,255,255,0.08)'}},axisLine:{lineStyle:{color:'rgba(255,255,255,0.08)'}}},
+            series:[{type:'radar',data:[
+                {value:[90,87,82,88,75,86],name:'非小细胞肺癌',areaStyle:{color:'rgba(56,189,248,0.15)'},lineStyle:{color:'#38bdf8',width:2},itemStyle:{color:'#38bdf8'}},
+                {value:[65,85,78,90,82,88],name:'食管癌',areaStyle:{color:'rgba(16,185,129,0.12)'},lineStyle:{color:'#10b981',width:2},itemStyle:{color:'#10b981'}},
+                {value:[55,83,80,85,88,90],name:'鼻咽癌',areaStyle:{color:'rgba(245,158,11,0.12)'},lineStyle:{color:'#f59e0b',width:2},itemStyle:{color:'#f59e0b'}}
+            ]}]
+        });
+
+        window.addEventListener('resize',()=>ins.forEach(i=>i.resize()));
+    };
+    </script>
+</body>
+</html>

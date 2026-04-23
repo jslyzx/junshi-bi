@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全数据分析 - 君实随访 BI</title>
+    <link rel="stylesheet" href="design-system.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>君实随访 BI</h2>
+        <ul class="menu">
+            <li class="menu-item"><a href="index.html"><span style="margin-right:10px">📊</span> Dashboard 看板</a></li>
+            <li class="menu-item"><a href="enrollment-analysis.html"><span style="margin-right:10px">📋</span> 入组分析</a></li>
+            <li class="menu-item"><a href="follow-up-analysis.html"><span style="margin-right:10px">📞</span> 随访分析</a></li>
+            <li class="menu-item"><a href="patient-analysis.html"><span style="margin-right:10px">👥</span> 患者分析</a></li>
+            <li class="menu-item"><a href="service-analysis.html"><span style="margin-right:10px">🛎️</span> 服务数据分析</a></li>
+            <li class="menu-item active"><a href="safety-analysis.html"><span style="margin-right:10px">🛡️</span> 安全数据分析</a></li>
+            <li class="menu-item"><a href="insight-analysis.html"><span style="margin-right:10px">💡</span> 数据洞察</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="header">
+                <h1>安全数据分析（PV 药物警戒）</h1>
+                <div style="color:var(--text-muted);font-size:13px">数据更新至：2026-04-23</div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card" style="--primary-color:#10b981"><div class="label">AE 识别记录完整率</div><div class="value">92.4%</div><div class="change positive">↑ 3.1%</div></div>
+                <div class="metric-card" style="--primary-color:#38bdf8"><div class="label">AE 上报时效达成率</div><div class="value">88.7%</div><div class="change positive">↑ 5.2%</div></div>
+                <div class="metric-card danger" style="--primary-color:#f43f5e"><div class="label">红灯患者回流时效</div><div class="value">4.2h</div><div class="change positive">↓ 1.3h</div></div>
+                <div class="metric-card warning" style="--primary-color:#f59e0b"><div class="label">黄灯患者跟进时效</div><div class="value">6.8h</div><div class="change positive">↓ 0.7h</div></div>
+                <div class="metric-card" style="--primary-color:#8b5cf6"><div class="label">PV 一致性核查通过率</div><div class="value">95.3%</div><div class="change positive">↑ 2.8%</div></div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>AE 识别完整率月度趋势</h3>
+                    <div id="aeCompleteRate" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>AE 上报时效分布</h3>
+                    <div id="aeTimeliness" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>红灯/黄灯患者处理时效趋势</h3>
+                    <div id="alertTimeliness" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>PV 核查通过率趋势与不通过原因</h3>
+                    <div id="pvCheck" class="chart"></div>
+                </div>
+            </div>
+
+            <div class="footer"><p>© 2026 君实随访项目管理系统 · BI 专业版</p></div>
+        </div>
+    </div>
+
+    <script>
+    window.onload = function() {
+        const T = {backgroundColor:'rgba(30,41,59,0.9)',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,textStyle:{color:'#f1f5f9'}};
+        const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+        const ax = {axisLine:{lineStyle:{color:'rgba(255,255,255,0.1)'}},axisLabel:{color:'#94a3b8'}};
+        const sp = {splitLine:{lineStyle:{color:'rgba(255,255,255,0.05)',type:'dashed'}}};
+        const ins = [];
+
+        // AE 识别完整率趋势 (含达标线)
+        const c1=echarts.init(document.getElementById('aeCompleteRate'));ins.push(c1);
+        c1.setOption({tooltip:{trigger:'axis',...T},legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
+            grid:{left:'4%',right:'4%',bottom:'8%',top:'15%',containLabel:true},
+            xAxis:{type:'category',data:months,...ax},yAxis:{type:'value',axisLabel:{formatter:'{value}%',color:'#94a3b8'},...sp,min:70},
+            series:[
+                {name:'完整率',type:'line',smooth:true,data:[78,80,82,84,85,87,88,89,90,91,92,92.4],
+                    lineStyle:{width:3,color:'#10b981'},itemStyle:{color:'#10b981'},symbol:'circle',symbolSize:6,
+                    areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(16,185,129,0.2)'},{offset:1,color:'rgba(16,185,129,0)'}])}},
+                {name:'达标线 (90%)',type:'line',data:Array(12).fill(90),lineStyle:{width:2,color:'#f43f5e',type:'dashed'},symbol:'none',itemStyle:{color:'#f43f5e'}}
+            ]
+        });
+
+        // AE 上报时效分布
+        const c2=echarts.init(document.getElementById('aeTimeliness'));ins.push(c2);
+        c2.setOption({tooltip:{trigger:'axis',...T},grid:{left:'4%',right:'4%',bottom:'8%',top:'12%',containLabel:true},
+            xAxis:{type:'category',data:['24h 内','24-48h','48-72h','超72h'],...ax},
+            yAxis:{type:'value',...ax,...sp},
+            series:[{type:'bar',barWidth:'50%',data:[125,48,15,8],
+                itemStyle:{borderRadius:[6,6,0,0],color:function(p){
+                    const c=['#10b981','#38bdf8','#f59e0b','#f43f5e'];
+                    return new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:c[p.dataIndex]},{offset:1,color:c[p.dataIndex]+'22'}]);
+                }},
+                label:{show:true,position:'top',color:'#94a3b8',formatter:'{c}例'}}]
+        });
+
+        // 红灯/黄灯处理时效趋势
+        const c3=echarts.init(document.getElementById('alertTimeliness'));ins.push(c3);
+        c3.setOption({tooltip:{trigger:'axis',...T},legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
+            grid:{left:'4%',right:'4%',bottom:'8%',top:'15%',containLabel:true},
+            xAxis:{type:'category',data:months,...ax},yAxis:{type:'value',axisLabel:{formatter:'{value}h',color:'#94a3b8'},...sp},
+            series:[
+                {name:'红灯回流时效',type:'line',smooth:true,data:[8.5,8.0,7.5,7.0,6.5,6.2,5.8,5.5,5.2,4.8,4.5,4.2],
+                    lineStyle:{width:3,color:'#f43f5e'},itemStyle:{color:'#f43f5e'},symbol:'circle',symbolSize:6,
+                    areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(244,63,94,0.15)'},{offset:1,color:'rgba(244,63,94,0)'}])}},
+                {name:'黄灯跟进时效',type:'line',smooth:true,data:[12,11.5,11,10.5,10,9.5,9,8.5,8,7.5,7.2,6.8],
+                    lineStyle:{width:3,color:'#f59e0b'},itemStyle:{color:'#f59e0b'},symbol:'circle',symbolSize:6,
+                    areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(245,158,11,0.15)'},{offset:1,color:'rgba(245,158,11,0)'}])}}
+            ]
+        });
+
+        // PV 核查通过率 + 不通过原因
+        const c4=echarts.init(document.getElementById('pvCheck'));ins.push(c4);
+        c4.setOption({tooltip:{trigger:'axis',...T},legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
+            grid:{left:'4%',right:'4%',bottom:'8%',top:'15%',containLabel:true},
+            xAxis:{type:'category',data:months,...ax},
+            yAxis:[
+                {type:'value',axisLabel:{formatter:'{value}%',color:'#94a3b8'},...sp,min:80},
+                {type:'value',...ax,splitLine:{show:false}}
+            ],
+            series:[
+                {name:'通过率',type:'line',smooth:true,data:[85,86.5,88,89,90,91,92,93,93.5,94,95,95.3],
+                    lineStyle:{width:3,color:'#8b5cf6'},itemStyle:{color:'#8b5cf6'},symbol:'circle',symbolSize:6,
+                    areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(139,92,246,0.2)'},{offset:1,color:'rgba(139,92,246,0)'}])}},
+                {name:'信息不一致',type:'bar',yAxisIndex:1,stack:'fail',barWidth:'25%',data:[8,7,6,5,5,4,4,3,3,3,2,2],itemStyle:{color:'#f43f5e'}},
+                {name:'记录缺失',type:'bar',yAxisIndex:1,stack:'fail',barWidth:'25%',data:[5,4,4,3,3,3,2,2,2,2,1,1],itemStyle:{color:'#f59e0b',borderRadius:[4,4,0,0]}}
+            ]
+        });
+
+        window.addEventListener('resize',()=>ins.forEach(i=>i.resize()));
+    };
+    </script>
+</body>
+</html>

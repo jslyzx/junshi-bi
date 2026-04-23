@@ -3,178 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>患者分析</title>
+    <title>患者分析 - 君实随访 BI</title>
     <link rel="stylesheet" href="design-system.css">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 </head>
 <body>
     <div class="sidebar">
-        <h2>患者关爱 BI</h2>
+        <h2>君实随访 BI</h2>
         <ul class="menu">
-            <li class="menu-item">
-                <a href="index.html">
-                    <span style="margin-right: 12px;">📊</span> 首页概览
-                </a>
-            </li>
-            <li class="menu-item active">
-                <a href="patient-analysis.html">
-                    <span style="margin-right: 12px;">👥</span> 患者分析
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="follow-up-analysis.html">
-                    <span style="margin-right: 12px;">📞</span> 随访分析
-                </a>
-            </li>
+            <li class="menu-item"><a href="index.html"><span style="margin-right:10px">📊</span> Dashboard 看板</a></li>
+            <li class="menu-item"><a href="enrollment-analysis.html"><span style="margin-right:10px">📋</span> 入组分析</a></li>
+            <li class="menu-item"><a href="follow-up-analysis.html"><span style="margin-right:10px">📞</span> 随访分析</a></li>
+            <li class="menu-item active"><a href="patient-analysis.html"><span style="margin-right:10px">👥</span> 患者分析</a></li>
+            <li class="menu-item"><a href="service-analysis.html"><span style="margin-right:10px">🛎️</span> 服务数据分析</a></li>
+            <li class="menu-item"><a href="safety-analysis.html"><span style="margin-right:10px">🛡️</span> 安全数据分析</a></li>
+            <li class="menu-item"><a href="insight-analysis.html"><span style="margin-right:10px">💡</span> 数据洞察</a></li>
         </ul>
     </div>
-    
+
     <div class="main-content">
         <div class="container">
             <div class="header">
                 <h1>患者分析</h1>
-                <div style="color: var(--text-muted); font-size: 14px;">数据更新至：2026-04-23</div>
+                <div style="color:var(--text-muted);font-size:13px">数据更新至：2026-04-23</div>
             </div>
-            
+
             <div class="metrics-grid">
-                <div class="metric-card" style="--primary-color: #38bdf8;">
-                    <div class="label">患者建档数</div>
-                    <div class="value">3,456</div>
-                    <div class="change positive">↑ 8.7%</div>
-                </div>
-                
-                <div class="metric-card" style="--primary-color: #10b981;">
-                    <div class="label">新患者数</div>
-                    <div class="value">1,245</div>
-                    <div class="change positive">↑ 15.3%</div>
-                </div>
-                
-                <div class="metric-card" style="--primary-color: #f59e0b;">
-                    <div class="label">老患者数</div>
-                    <div class="value">2,211</div>
-                    <div class="change positive">↑ 5.2%</div>
-                </div>
-                
-                <div class="metric-card" style="--primary-color: #8b5cf6;">
-                    <div class="label">新老患者占比</div>
-                    <div class="value">36:64</div>
-                    <div class="change negative">↓ 2.1%</div>
-                </div>
+                <div class="metric-card" style="--primary-color:#38bdf8"><div class="label">累计入组数</div><div class="value">3,456</div><div class="change positive">↑ 8.7%</div></div>
+                <div class="metric-card" style="--primary-color:#10b981"><div class="label">本月新增</div><div class="value">178</div><div class="change positive">↑ 15.3% 环比</div></div>
+                <div class="metric-card" style="--primary-color:#8b5cf6"><div class="label">活跃患者数</div><div class="value">2,856</div><div class="change positive">↑ 5.2%</div></div>
+                <div class="metric-card" style="--primary-color:#f59e0b"><div class="label">留存率</div><div class="value">82.6%</div><div class="change positive">↑ 1.8%</div></div>
+                <div class="metric-card" style="--primary-color:#06b6d4"><div class="label">患者满意度</div><div class="value">4.5/5</div><div class="change positive">↑ 0.3</div></div>
             </div>
-            
+
             <div class="charts-grid">
                 <div class="chart-container">
-                    <h3>患者建档数量月度趋势</h3>
-                    <div id="registrationTrendChart" class="chart"></div>
+                    <h3>新增入组趋势（含环比）</h3>
+                    <div id="newTrend" class="chart"></div>
                 </div>
-                
                 <div class="chart-container">
-                    <h3>患者 DOT 月度趋势</h3>
-                    <div id="dotTrendChart" class="chart"></div>
+                    <h3>随访活跃率趋势</h3>
+                    <div id="activeTrend" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>各周期留存率漏斗</h3>
+                    <div id="retentionFunnel" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>患者年龄/性别分布</h3>
+                    <div id="ageGender" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>患者地域分布 TOP10</h3>
+                    <div id="regionDist" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>黄灯/红灯患者画像</h3>
+                    <div id="alertProfile" class="chart"></div>
                 </div>
             </div>
-            
-            <div class="footer">
-                <p>© 2026 患者关爱项目管理系统 · 专业版</p>
-            </div>
+
+            <div class="footer"><p>© 2026 君实随访项目管理系统 · BI 专业版</p></div>
         </div>
     </div>
 
-    
     <script>
-        // 初始化图表
-        window.onload = function() {
-            // 通用配置
-            const commonTooltip = {
-                backgroundColor: 'rgba(30, 41, 59, 0.9)',
-                borderColor: 'rgba(255, 255, 255, 0.1)',
-                borderWidth: 1,
-                textStyle: { color: '#f1f5f9' },
-                backdropFilter: 'blur(4px)'
-            };
+    window.onload = function() {
+        const T = {backgroundColor:'rgba(30,41,59,0.9)',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,textStyle:{color:'#f1f5f9'}};
+        const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+        const ax = {axisLine:{lineStyle:{color:'rgba(255,255,255,0.1)'}},axisLabel:{color:'#94a3b8'}};
+        const sp = {splitLine:{lineStyle:{color:'rgba(255,255,255,0.05)',type:'dashed'}}};
+        const ins = [];
 
-            // 患者建档数量月度趋势图
-            const registrationTrendChart = echarts.init(document.getElementById('registrationTrendChart'));
-            const registrationTrendOption = {
-                tooltip: {
-                    trigger: 'axis',
-                    ...commonTooltip
-                },
-                grid: {
-                    left: '4%', right: '4%', bottom: '10%', top: '15%', containLabel: true
-                },
-                xAxis: {
-                    type: 'category',
-                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-                    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-                    axisLabel: { color: '#94a3b8' }
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLabel: { color: '#94a3b8' },
-                    splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)', type: 'dashed' } }
-                },
-                series: [{
-                    name: '建档数量',
-                    type: 'bar',
-                    data: [120, 180, 220, 280, 320, 350, 380, 420, 450, 480, 520, 550],
-                    barWidth: '40%',
-                    itemStyle: {
-                        borderRadius: [6, 6, 0, 0],
-                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                            {offset: 0, color: '#38bdf8'},
-                            {offset: 1, color: 'rgba(56, 189, 248, 0.1)'}
-                        ])
-                    }
-                }]
-            };
-            registrationTrendChart.setOption(registrationTrendOption);
-            
-            // 患者DOT月度趋势图
-            const dotTrendChart = echarts.init(document.getElementById('dotTrendChart'));
-            const dotTrendOption = {
-                tooltip: {
-                    trigger: 'axis',
-                    ...commonTooltip
-                },
-                grid: {
-                    left: '4%', right: '4%', bottom: '10%', top: '15%', containLabel: true
-                },
-                xAxis: {
-                    type: 'category',
-                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-                    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-                    axisLabel: { color: '#94a3b8' }
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLabel: { color: '#94a3b8' },
-                    splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)', type: 'dashed' } }
-                },
-                series: [{
-                    name: 'DOT值',
-                    type: 'line',
-                    data: [65, 70, 75, 78, 82, 85, 88, 90, 92, 94, 95, 96],
-                    smooth: true,
-                    symbol: 'circle',
-                    symbolSize: 10,
-                    lineStyle: { color: '#10b981', width: 4 },
-                    itemStyle: { color: '#10b981', borderColor: '#fff', borderWidth: 2 },
-                    areaStyle: {
-                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                            {offset: 0, color: 'rgba(16, 185, 129, 0.2)'},
-                            {offset: 1, color: 'rgba(16, 185, 129, 0)'}
-                        ])
-                    }
-                }]
-            };
-            dotTrendChart.setOption(dotTrendOption);
-            
-            window.addEventListener('resize', function() {
-                registrationTrendChart.resize();
-                dotTrendChart.resize();
-            });
-        };
+        // 新增入组趋势
+        const c1=echarts.init(document.getElementById('newTrend'));ins.push(c1);
+        c1.setOption({tooltip:{trigger:'axis',...T},legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
+            grid:{left:'4%',right:'8%',bottom:'8%',top:'15%',containLabel:true},
+            xAxis:{type:'category',data:months,...ax},
+            yAxis:[{type:'value',...ax,...sp},{type:'value',axisLabel:{formatter:'{value}%',color:'#94a3b8'},splitLine:{show:false}}],
+            series:[
+                {name:'新增数',type:'bar',barWidth:'40%',data:[95,102,115,128,135,142,150,158,165,172,175,178],
+                    itemStyle:{borderRadius:[6,6,0,0],color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#38bdf8'},{offset:1,color:'rgba(56,189,248,0.1)'}])}},
+                {name:'环比',type:'line',yAxisIndex:1,smooth:true,data:[null,7.4,12.7,11.3,5.5,5.2,5.6,5.3,4.4,4.2,1.7,1.7],
+                    lineStyle:{width:2,color:'#f59e0b'},itemStyle:{color:'#f59e0b'},symbol:'circle',symbolSize:5}
+            ]
+        });
+
+        // 活跃率趋势
+        const c2=echarts.init(document.getElementById('activeTrend'));ins.push(c2);
+        c2.setOption({tooltip:{trigger:'axis',...T},grid:{left:'4%',right:'4%',bottom:'8%',top:'12%',containLabel:true},
+            xAxis:{type:'category',data:months,...ax},yAxis:{type:'value',axisLabel:{formatter:'{value}%',color:'#94a3b8'},...sp},
+            series:[{name:'活跃率',type:'line',smooth:true,data:[72,74,76,77,78,79,80,80.5,81,81.5,82,82.6],
+                lineStyle:{width:3,color:'#10b981'},itemStyle:{color:'#10b981'},symbol:'circle',symbolSize:6,
+                areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(16,185,129,0.2)'},{offset:1,color:'rgba(16,185,129,0)'}])}}]
+        });
+
+        // 留存漏斗
+        const c3=echarts.init(document.getElementById('retentionFunnel'));ins.push(c3);
+        c3.setOption({tooltip:{trigger:'item',...T},
+            series:[{type:'funnel',left:'10%',top:'10%',bottom:'10%',width:'80%',min:0,max:100,minSize:'0%',maxSize:'100%',
+                sort:'descending',gap:4,label:{show:true,position:'inside',color:'#fff',fontSize:13},
+                itemStyle:{borderColor:'#1e293b',borderWidth:2},
+                data:[
+                    {value:100,name:'入组 (100%)',itemStyle:{color:'#38bdf8'}},
+                    {value:87.3,name:'首周期 (87.3%)',itemStyle:{color:'#10b981'}},
+                    {value:65.8,name:'第3周期 (65.8%)',itemStyle:{color:'#f59e0b'}},
+                    {value:42.1,name:'第5周期 (42.1%)',itemStyle:{color:'#8b5cf6'}},
+                    {value:32.5,name:'长期治疗 (32.5%)',itemStyle:{color:'#f43f5e'}}
+                ]}]
+        });
+
+        // 年龄/性别分布
+        const c4=echarts.init(document.getElementById('ageGender'));ins.push(c4);
+        const ageLabels=['18-30','31-40','41-50','51-60','61-70','70+'];
+        c4.setOption({tooltip:{trigger:'axis',...T},legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
+            grid:{left:'4%',right:'4%',bottom:'8%',top:'15%',containLabel:true},
+            xAxis:{type:'category',data:ageLabels,...ax},yAxis:{type:'value',...ax,...sp},
+            series:[
+                {name:'男性',type:'bar',barWidth:'30%',data:[85,120,180,210,165,95],itemStyle:{color:'#38bdf8',borderRadius:[4,4,0,0]}},
+                {name:'女性',type:'bar',barWidth:'30%',data:[75,110,195,225,175,105],itemStyle:{color:'#f43f5e',borderRadius:[4,4,0,0]}}
+            ]
+        });
+
+        // 地域分布
+        const c5=echarts.init(document.getElementById('regionDist'));ins.push(c5);
+        const regions=['上海','北京','广东','江苏','浙江','山东','四川','湖北','河南','湖南'];
+        c5.setOption({tooltip:{trigger:'axis',...T},grid:{left:'18%',right:'6%',bottom:'8%',top:'6%'},
+            yAxis:{type:'category',data:regions.reverse(),...ax,axisTick:{show:false}},
+            xAxis:{type:'value',...ax,...sp},
+            series:[{type:'bar',data:[120,145,168,195,215,265,310,385,425,520].reverse(),barWidth:'50%',
+                itemStyle:{borderRadius:[0,4,4,0],color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'rgba(139,92,246,0.2)'},{offset:1,color:'#8b5cf6'}])}}]
+        });
+
+        // 黄灯/红灯画像
+        const c6=echarts.init(document.getElementById('alertProfile'));ins.push(c6);
+        c6.setOption({tooltip:{trigger:'item',...T},legend:{bottom:0,textStyle:{color:'#94a3b8'},icon:'circle'},
+            series:[{type:'pie',radius:['40%','65%'],center:['50%','45%'],avoidLabelOverlap:false,
+                itemStyle:{borderRadius:8,borderColor:'#1e293b',borderWidth:3},label:{show:false},
+                data:[
+                    {value:35,name:'用药依从性差',itemStyle:{color:'#f59e0b'}},
+                    {value:25,name:'AE风险',itemStyle:{color:'#f43f5e'}},
+                    {value:20,name:'随访中断',itemStyle:{color:'#8b5cf6'}},
+                    {value:12,name:'经济困难',itemStyle:{color:'#38bdf8'}},
+                    {value:8,name:'情绪问题',itemStyle:{color:'#06b6d4'}}
+                ]}]
+        });
+
+        window.addEventListener('resize',()=>ins.forEach(i=>i.resize()));
+    };
     </script>
 </body>
 </html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务数据分析 - 君实随访 BI</title>
+    <link rel="stylesheet" href="design-system.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>君实随访 BI</h2>
+        <ul class="menu">
+            <li class="menu-item"><a href="index.html"><span style="margin-right:10px">📊</span> Dashboard 看板</a></li>
+            <li class="menu-item"><a href="enrollment-analysis.html"><span style="margin-right:10px">📋</span> 入组分析</a></li>
+            <li class="menu-item"><a href="follow-up-analysis.html"><span style="margin-right:10px">📞</span> 随访分析</a></li>
+            <li class="menu-item"><a href="patient-analysis.html"><span style="margin-right:10px">👥</span> 患者分析</a></li>
+            <li class="menu-item active"><a href="service-analysis.html"><span style="margin-right:10px">🛎️</span> 服务数据分析</a></li>
+            <li class="menu-item"><a href="safety-analysis.html"><span style="margin-right:10px">🛡️</span> 安全数据分析</a></li>
+            <li class="menu-item"><a href="insight-analysis.html"><span style="margin-right:10px">💡</span> 数据洞察</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="header">
+                <h1>服务数据分析</h1>
+                <div style="color:var(--text-muted);font-size:13px">数据更新至：2026-04-23</div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card" style="--primary-color:#38bdf8"><div class="label">平均响应时长</div><div class="value">2.3h</div><div class="change positive">↓ 0.5h</div></div>
+                <div class="metric-card" style="--primary-color:#10b981"><div class="label">服务完成率</div><div class="value">94.2%</div><div class="change positive">↑ 2.1%</div></div>
+                <div class="metric-card" style="--primary-color:#f59e0b"><div class="label">患者满意度</div><div class="value">4.6/5</div><div class="change positive">↑ 0.2</div></div>
+                <div class="metric-card danger" style="--primary-color:#f43f5e"><div class="label">异常服务次数</div><div class="value">23</div><div class="change negative">↑ 3</div></div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>服务响应时长分布</h3>
+                    <div id="responseTime" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>服务完成率月度趋势</h3>
+                    <div id="completionTrend" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>患者满意度评分分布</h3>
+                    <div id="satisfaction" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>服务异常类型占比</h3>
+                    <div id="abnormalType" class="chart"></div>
+                </div>
+            </div>
+
+            <div class="footer"><p>© 2026 君实随访项目管理系统 · BI 专业版</p></div>
+        </div>
+    </div>
+
+    <script>
+    window.onload = function() {
+        const T = {backgroundColor:'rgba(30,41,59,0.9)',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,textStyle:{color:'#f1f5f9'}};
+        const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+        const ax = {axisLine:{lineStyle:{color:'rgba(255,255,255,0.1)'}},axisLabel:{color:'#94a3b8'}};
+        const sp = {splitLine:{lineStyle:{color:'rgba(255,255,255,0.05)',type:'dashed'}}};
+        const ins = [];
+
+        // 响应时长分布
+        const c1=echarts.init(document.getElementById('responseTime'));ins.push(c1);
+        c1.setOption({tooltip:{trigger:'axis',...T},grid:{left:'4%',right:'4%',bottom:'8%',top:'12%',containLabel:true},
+            xAxis:{type:'category',data:['<1h','1-2h','2-4h','4-8h','8-12h','12-24h','>24h'],...ax},
+            yAxis:{type:'value',...ax,...sp},
+            series:[{type:'bar',barWidth:'50%',data:[320,480,350,180,85,42,15],
+                itemStyle:{borderRadius:[6,6,0,0],color:function(p){
+                    const colors=['#10b981','#10b981','#38bdf8','#f59e0b','#f59e0b','#f43f5e','#f43f5e'];
+                    return new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:colors[p.dataIndex]},{offset:1,color:colors[p.dataIndex]+'22'}]);
+                }}}]
+        });
+
+        // 服务完成率趋势
+        const c2=echarts.init(document.getElementById('completionTrend'));ins.push(c2);
+        c2.setOption({tooltip:{trigger:'axis',...T},legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
+            grid:{left:'4%',right:'4%',bottom:'8%',top:'15%',containLabel:true},
+            xAxis:{type:'category',data:months,...ax},yAxis:{type:'value',axisLabel:{formatter:'{value}%',color:'#94a3b8'},...sp,min:80},
+            series:[
+                {name:'服务完成率',type:'line',smooth:true,data:[88,89,90,90.5,91,91.5,92,92.5,93,93.5,94,94.2],
+                    lineStyle:{width:3,color:'#10b981'},itemStyle:{color:'#10b981'},symbol:'circle',symbolSize:6,
+                    areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(16,185,129,0.2)'},{offset:1,color:'rgba(16,185,129,0)'}])}},
+                {name:'首周期完成率',type:'line',smooth:true,data:[82,83,84,84.5,85,85.5,86,86.5,87,87,87.3,87.3],
+                    lineStyle:{width:2,color:'#38bdf8',type:'dashed'},itemStyle:{color:'#38bdf8'},symbol:'circle',symbolSize:5}
+            ]
+        });
+
+        // 满意度评分分布
+        const c3=echarts.init(document.getElementById('satisfaction'));ins.push(c3);
+        const scores=['1分','2分','3分','4分','5分'];
+        c3.setOption({tooltip:{trigger:'axis',...T},grid:{left:'14%',right:'6%',bottom:'8%',top:'6%'},
+            yAxis:{type:'category',data:scores,...ax,axisTick:{show:false}},
+            xAxis:{type:'value',...ax,...sp},
+            series:[{type:'bar',data:[8,22,85,520,810],barWidth:'50%',
+                itemStyle:{borderRadius:[0,4,4,0],color:function(p){
+                    const c=['#f43f5e','#f59e0b','#f59e0b','#38bdf8','#10b981'];
+                    return new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:c[p.dataIndex]+'33'},{offset:1,color:c[p.dataIndex]}]);
+                }},
+                label:{show:true,position:'right',color:'#94a3b8',formatter:'{c}人'}}]
+        });
+
+        // 异常类型占比
+        const c4=echarts.init(document.getElementById('abnormalType'));ins.push(c4);
+        c4.setOption({tooltip:{trigger:'item',...T},legend:{bottom:0,textStyle:{color:'#94a3b8'},icon:'circle'},
+            series:[{type:'pie',radius:['40%','65%'],center:['50%','45%'],avoidLabelOverlap:false,
+                itemStyle:{borderRadius:8,borderColor:'#1e293b',borderWidth:3},label:{show:false},
+                data:[
+                    {value:35,name:'响应超时',itemStyle:{color:'#f43f5e'}},
+                    {value:25,name:'信息录入错误',itemStyle:{color:'#f59e0b'}},
+                    {value:20,name:'服务中断',itemStyle:{color:'#8b5cf6'}},
+                    {value:12,name:'沟通不畅',itemStyle:{color:'#38bdf8'}},
+                    {value:8,name:'其他',itemStyle:{color:'#94a3b8'}}
+                ]}]
+        });
+
+        window.addEventListener('resize',()=>ins.forEach(i=>i.resize()));
+    };
+    </script>
+</body>
+</html>

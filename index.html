@@ -3,196 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>首页</title>
+    <title>Dashboard 看板 - 君实随访 BI</title>
     <link rel="stylesheet" href="design-system.css">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 </head>
 <body>
     <div class="sidebar">
-        <h2>患者关爱 BI</h2>
+        <h2>君实随访 BI</h2>
         <ul class="menu">
-            <li class="menu-item active">
-                <a href="index.html">
-                    <span style="margin-right: 12px;">📊</span> 首页概览
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="patient-analysis.html">
-                    <span style="margin-right: 12px;">👥</span> 患者分析
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="follow-up-analysis.html">
-                    <span style="margin-right: 12px;">📞</span> 随访分析
-                </a>
-            </li>
+            <li class="menu-item active"><a href="index.html"><span style="margin-right:10px">📊</span> Dashboard 看板</a></li>
+            <li class="menu-item"><a href="enrollment-analysis.html"><span style="margin-right:10px">📋</span> 入组分析</a></li>
+            <li class="menu-item"><a href="follow-up-analysis.html"><span style="margin-right:10px">📞</span> 随访分析</a></li>
+            <li class="menu-item"><a href="patient-analysis.html"><span style="margin-right:10px">👥</span> 患者分析</a></li>
+            <li class="menu-item"><a href="service-analysis.html"><span style="margin-right:10px">🛎️</span> 服务数据分析</a></li>
+            <li class="menu-item"><a href="safety-analysis.html"><span style="margin-right:10px">🛡️</span> 安全数据分析</a></li>
+            <li class="menu-item"><a href="insight-analysis.html"><span style="margin-right:10px">💡</span> 数据洞察</a></li>
         </ul>
     </div>
-    
+
     <div class="main-content">
         <div class="container">
             <div class="header">
-                <h1>首页概览</h1>
-                <div style="color: var(--text-muted); font-size: 14px;">数据更新至：2026-04-23</div>
+                <h1>Dashboard 看板</h1>
+                <div class="tab-bar">
+                    <button class="tab active">月</button>
+                    <button class="tab">周</button>
+                    <button class="tab">日</button>
+                </div>
             </div>
-            
+
             <div class="metrics-grid">
-                <div class="metric-card" style="--primary-color: #38bdf8;">
-                    <div class="label">新入组数</div>
-                    <div class="value">1,245</div>
-                    <div class="change positive">↑ 12.5%</div>
-                </div>
-                
-                <div class="metric-card" style="--primary-color: #10b981;">
-                    <div class="label">首周期完成率</div>
-                    <div class="value">87.3%</div>
-                    <div class="change positive">↑ 3.2%</div>
-                </div>
-                
-                <div class="metric-card" style="--primary-color: #f59e0b;">
-                    <div class="label">第3周期完成率</div>
-                    <div class="value">65.8%</div>
-                    <div class="change positive">↑ 2.1%</div>
-                </div>
-                
-                <div class="metric-card" style="--primary-color: #8b5cf6;">
-                    <div class="label">5周期持续治疗率</div>
-                    <div class="value">42.1%</div>
-                    <div class="change negative">↓ 1.5%</div>
-                </div>
-                
-                <div class="metric-card" style="--primary-color: #f43f5e;">
-                    <div class="label">失访率</div>
-                    <div class="value">12.5%</div>
-                    <div class="change negative">↓ 0.8%</div>
-                </div>
+                <div class="metric-card" style="--primary-color:#38bdf8"><div class="label">新入组数</div><div class="value">1,245</div><div class="change positive">↑ 12.5%</div></div>
+                <div class="metric-card" style="--primary-color:#10b981"><div class="label">首周期完成率</div><div class="value">87.3%</div><div class="change positive">↑ 3.2%</div></div>
+                <div class="metric-card" style="--primary-color:#f59e0b"><div class="label">第3周期完成率</div><div class="value">65.8%</div><div class="change positive">↑ 2.1%</div></div>
+                <div class="metric-card" style="--primary-color:#8b5cf6"><div class="label">5周期持续治疗率</div><div class="value">42.1%</div><div class="change negative">↓ 1.5%</div></div>
+                <div class="metric-card" style="--primary-color:#f43f5e"><div class="label">失访率</div><div class="value">12.5%</div><div class="change negative">↓ 0.8%</div></div>
+                <div class="metric-card warning" style="--primary-color:#f59e0b"><div class="label">黄灯患者占比</div><div class="value">18.2%</div><div class="change negative">↑ 1.3%</div></div>
+                <div class="metric-card danger" style="--primary-color:#f43f5e"><div class="label">红灯患者占比</div><div class="value">6.7%</div><div class="change negative">↑ 0.5%</div></div>
+                <div class="metric-card" style="--primary-color:#06b6d4"><div class="label">AE 上报量</div><div class="value">196</div><div class="change positive">↑ 8.3%</div></div>
             </div>
-            
+
             <div class="charts-grid">
-                <div class="chart-container">
-                    <h3>治疗周期完成率月度趋势</h3>
-                    <div id="completionRateChart" class="chart"></div>
+                <div class="chart-container full-width">
+                    <h3>核心指标月度趋势</h3>
+                    <div id="trendChart" class="chart"></div>
                 </div>
-                
                 <div class="chart-container">
                     <h3>患者状态分布</h3>
-                    <div id="patientStatusChart" class="chart"></div>
+                    <div id="statusChart" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>异常指标预警雷达</h3>
+                    <div id="radarChart" class="chart"></div>
+                </div>
+                <div class="chart-container full-width">
+                    <h3>黄灯/红灯患者趋势</h3>
+                    <div id="alertChart" class="chart"></div>
                 </div>
             </div>
-            
-            <div class="footer">
-                <p>© 2026 患者关爱项目管理系统 · 专业版</p>
-            </div>
+
+            <div class="footer"><p>© 2026 君实随访项目管理系统 · BI 专业版</p></div>
         </div>
     </div>
 
-    
     <script>
-        // 初始化图表
-        window.onload = function() {
-            // 通用配置
-            const commonTooltip = {
-                backgroundColor: 'rgba(30, 41, 59, 0.9)',
-                borderColor: 'rgba(255, 255, 255, 0.1)',
-                borderWidth: 1,
-                textStyle: { color: '#f1f5f9' },
-                backdropFilter: 'blur(4px)'
-            };
+    window.onload = function() {
+        const T = { backgroundColor:'rgba(30,41,59,0.9)', borderColor:'rgba(255,255,255,0.1)', borderWidth:1, textStyle:{color:'#f1f5f9'} };
+        const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+        const axisStyle = { axisLine:{lineStyle:{color:'rgba(255,255,255,0.1)'}}, axisLabel:{color:'#94a3b8'} };
+        const splitStyle = { splitLine:{lineStyle:{color:'rgba(255,255,255,0.05)',type:'dashed'}} };
 
-            // 治疗周期完成率趋势图
-            const completionRateChart = echarts.init(document.getElementById('completionRateChart'));
-            const completionRateOption = {
-                tooltip: {
-                    trigger: 'axis',
-                    ...commonTooltip,
-                    formatter: '{b}: <span style="color:#38bdf8;font-weight:700">{c}%</span>'
-                },
-                grid: {
-                    left: '4%', right: '4%', bottom: '10%', top: '15%', containLabel: true
-                },
-                xAxis: {
-                    type: 'category',
-                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-                    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-                    axisLabel: { color: '#94a3b8' }
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLabel: { formatter: '{value}%', color: '#94a3b8' },
-                    splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)', type: 'dashed' } }
-                },
-                series: [{
-                    name: '完成率',
-                    type: 'bar',
-                    data: [45.2, 48.7, 52.3, 56.8, 61.5, 66.2, 70.8, 75.3, 79.6, 83.2, 86.5, 89.8],
-                    barWidth: '40%',
-                    itemStyle: {
-                        borderRadius: [6, 6, 0, 0],
-                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                            {offset: 0, color: '#38bdf8'},
-                            {offset: 1, color: 'rgba(56, 189, 248, 0.1)'}
-                        ])
-                    },
-                    emphasis: {
-                        itemStyle: {
-                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                                {offset: 0, color: '#7dd3fc'},
-                                {offset: 1, color: 'rgba(56, 189, 248, 0.3)'}
-                            ])
-                        }
-                    }
-                }]
-            };
-            completionRateChart.setOption(completionRateOption);
-            
-            // 患者状态分布图
-            const patientStatusChart = echarts.init(document.getElementById('patientStatusChart'));
-            const patientStatusOption = {
-                tooltip: {
-                    trigger: 'item',
-                    ...commonTooltip
-                },
-                legend: {
-                    orient: 'horizontal',
-                    bottom: '0',
-                    textStyle: { color: '#94a3b8' },
-                    icon: 'circle'
-                },
-                series: [{
-                    name: '患者状态',
-                    type: 'pie',
-                    radius: ['50%', '70%'],
-                    avoidLabelOverlap: false,
-                    itemStyle: {
-                        borderRadius: 10,
-                        borderColor: '#1e293b',
-                        borderWidth: 4
-                    },
-                    label: { show: false },
-                    emphasis: {
-                        label: {
-                            show: true,
-                            fontSize: 18,
-                            fontWeight: 'bold',
-                            color: '#f1f5f9'
-                        }
-                    },
-                    data: [
-                        {value: 42.1, name: '持续治疗中', itemStyle: {color: '#38bdf8'}},
-                        {value: 35.4, name: '已完成治疗', itemStyle: {color: '#10b981'}},
-                        {value: 12.5, name: '失访', itemStyle: {color: '#f43f5e'}},
-                        {value: 10.0, name: '中断治疗', itemStyle: {color: '#f59e0b'}}
-                    ]
-                }]
-            };
-            patientStatusChart.setOption(patientStatusOption);
-            
-            // 响应式调整
-            window.addEventListener('resize', function() {
-                completionRateChart.resize();
-                patientStatusChart.resize();
-            });
-        };
+        // 核心指标趋势
+        const c1 = echarts.init(document.getElementById('trendChart'));
+        c1.setOption({
+            tooltip:{trigger:'axis',...T}, legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
+            grid:{left:'3%',right:'3%',bottom:'8%',top:'18%',containLabel:true},
+            xAxis:{type:'category',data:months,...axisStyle},
+            yAxis:{type:'value',axisLabel:{formatter:'{value}%',color:'#94a3b8'},...splitStyle},
+            series:[
+                {name:'首周期完成率',type:'line',smooth:true,data:[78,79,81,82,84,85,86,86.5,87,87.2,87.3,87.3],lineStyle:{width:3,color:'#10b981'},itemStyle:{color:'#10b981'},symbol:'circle',symbolSize:6},
+                {name:'第3周期完成率',type:'line',smooth:true,data:[52,54,56,57,59,60,62,63,64,65,65.5,65.8],lineStyle:{width:3,color:'#f59e0b'},itemStyle:{color:'#f59e0b'},symbol:'circle',symbolSize:6},
+                {name:'失访率',type:'line',smooth:true,data:[16,15.5,15,14.8,14.2,13.8,13.5,13.2,13,12.8,12.6,12.5],lineStyle:{width:3,color:'#f43f5e'},itemStyle:{color:'#f43f5e'},symbol:'circle',symbolSize:6},
+                {name:'5周期治疗率',type:'line',smooth:true,data:[35,36,37,38,39,39.5,40,40.5,41,41.5,41.8,42.1],lineStyle:{width:3,color:'#8b5cf6'},itemStyle:{color:'#8b5cf6'},symbol:'circle',symbolSize:6}
+            ]
+        });
+
+        // 患者状态分布
+        const c2 = echarts.init(document.getElementById('statusChart'));
+        c2.setOption({
+            tooltip:{trigger:'item',...T}, legend:{bottom:0,textStyle:{color:'#94a3b8'},icon:'circle'},
+            series:[{type:'pie',radius:['45%','70%'],center:['50%','45%'],avoidLabelOverlap:false,
+                itemStyle:{borderRadius:8,borderColor:'#1e293b',borderWidth:3},label:{show:false},
+                emphasis:{label:{show:true,fontSize:16,fontWeight:'bold',color:'#f1f5f9'}},
+                data:[
+                    {value:42.1,name:'持续治疗',itemStyle:{color:'#38bdf8'}},
+                    {value:35.4,name:'已完成',itemStyle:{color:'#10b981'}},
+                    {value:12.5,name:'失访',itemStyle:{color:'#f43f5e'}},
+                    {value:6.7,name:'红灯',itemStyle:{color:'#ef4444'}},
+                    {value:3.3,name:'中断',itemStyle:{color:'#f59e0b'}}
+                ]
+            }]
+        });
+
+        // 异常预警雷达
+        const c3 = echarts.init(document.getElementById('radarChart'));
+        c3.setOption({
+            tooltip:{...T},
+            radar:{indicator:[
+                {name:'失访率',max:30},{name:'AE发生率',max:20},{name:'脱落率',max:20},
+                {name:'红灯占比',max:15},{name:'黄灯占比',max:30},{name:'超时率',max:25}
+            ],axisName:{color:'#94a3b8',fontSize:11},splitArea:{areaStyle:{color:['rgba(56,189,248,0.02)','rgba(56,189,248,0.04)']}},
+            splitLine:{lineStyle:{color:'rgba(255,255,255,0.08)'}},axisLine:{lineStyle:{color:'rgba(255,255,255,0.08)'}}},
+            series:[{type:'radar',data:[{value:[12.5,8.3,8.3,6.7,18.2,15.5],name:'当前值',
+                areaStyle:{color:'rgba(244,63,94,0.15)'},lineStyle:{color:'#f43f5e',width:2},itemStyle:{color:'#f43f5e'}},
+                {value:[10,6,7,5,15,12],name:'目标值',lineStyle:{color:'#10b981',width:2,type:'dashed'},itemStyle:{color:'#10b981'},areaStyle:{color:'rgba(16,185,129,0.08)'}}
+            ]}]
+        });
+
+        // 黄灯/红灯趋势
+        const c4 = echarts.init(document.getElementById('alertChart'));
+        c4.setOption({
+            tooltip:{trigger:'axis',...T}, legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
+            grid:{left:'3%',right:'3%',bottom:'8%',top:'18%',containLabel:true},
+            xAxis:{type:'category',data:months,...axisStyle},
+            yAxis:{type:'value',axisLabel:{formatter:'{value}%',color:'#94a3b8'},...splitStyle},
+            series:[
+                {name:'黄灯占比',type:'bar',stack:'alert',barWidth:'35%',data:[15,15.5,16,16.2,16.8,17,17.3,17.5,17.8,18,18.1,18.2],
+                    itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#f59e0b'},{offset:1,color:'rgba(245,158,11,0.2)'}]),borderRadius:[0,0,0,0]}},
+                {name:'红灯占比',type:'bar',stack:'alert',barWidth:'35%',data:[4.5,4.8,5,5.2,5.5,5.7,5.9,6,6.2,6.4,6.5,6.7],
+                    itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#f43f5e'},{offset:1,color:'rgba(244,63,94,0.2)'}]),borderRadius:[4,4,0,0]}}
+            ]
+        });
+
+        window.addEventListener('resize',()=>{c1.resize();c2.resize();c3.resize();c4.resize()});
+    };
     </script>
 </body>
 </html>

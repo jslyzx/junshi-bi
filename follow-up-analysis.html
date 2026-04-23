@@ -3,219 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>患者关爱项目 - 随访分析</title>
+    <title>随访分析 - 君实随访 BI</title>
     <link rel="stylesheet" href="design-system.css">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 </head>
 <body>
     <div class="sidebar">
-        <h2>患者关爱 BI</h2>
+        <h2>君实随访 BI</h2>
         <ul class="menu">
-            <li class="menu-item">
-                <a href="index.html">
-                    <span style="margin-right: 12px;">📊</span> 首页概览
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="patient-analysis.html">
-                    <span style="margin-right: 12px;">👥</span> 患者分析
-                </a>
-            </li>
-            <li class="menu-item active">
-                <a href="follow-up-analysis.html">
-                    <span style="margin-right: 12px;">📞</span> 随访分析
-                </a>
-            </li>
+            <li class="menu-item"><a href="index.html"><span style="margin-right:10px">📊</span> Dashboard 看板</a></li>
+            <li class="menu-item"><a href="enrollment-analysis.html"><span style="margin-right:10px">📋</span> 入组分析</a></li>
+            <li class="menu-item active"><a href="follow-up-analysis.html"><span style="margin-right:10px">📞</span> 随访分析</a></li>
+            <li class="menu-item"><a href="patient-analysis.html"><span style="margin-right:10px">👥</span> 患者分析</a></li>
+            <li class="menu-item"><a href="service-analysis.html"><span style="margin-right:10px">🛎️</span> 服务数据分析</a></li>
+            <li class="menu-item"><a href="safety-analysis.html"><span style="margin-right:10px">🛡️</span> 安全数据分析</a></li>
+            <li class="menu-item"><a href="insight-analysis.html"><span style="margin-right:10px">💡</span> 数据洞察</a></li>
         </ul>
     </div>
-    
+
     <div class="main-content">
         <div class="container">
             <div class="header">
                 <h1>随访分析</h1>
-                <div style="color: var(--text-muted); font-size: 14px;">数据更新至：2026-04-23</div>
+                <div style="color:var(--text-muted);font-size:13px">数据更新至：2026-04-23</div>
             </div>
-            
+
             <div class="metrics-grid">
-                <div class="metric-card" style="--primary-color: #38bdf8;">
-                    <div class="label">随访完成率</div>
-                    <div class="value">85.7%</div>
-                    <div class="change positive">↑ 2.3%</div>
+                <div class="metric-card" style="--primary-color:#38bdf8"><div class="label">随访完成率</div><div class="value">85.7%</div><div class="change positive">↑ 2.3%</div></div>
+                <div class="metric-card" style="--primary-color:#10b981"><div class="label">完成数</div><div class="value">3,245</div><div class="change positive">↑ 156</div></div>
+                <div class="metric-card" style="--primary-color:#f59e0b"><div class="label">未完成数</div><div class="value">542</div><div class="change negative">↓ 23</div></div>
+                <div class="metric-card" style="--primary-color:#f43f5e"><div class="label">失访率</div><div class="value">12.5%</div><div class="change positive">↓ 0.8%</div></div>
+                <div class="metric-card" style="--primary-color:#06b6d4"><div class="label">AE 上报量</div><div class="value">196</div><div class="change positive">↑ 8.3%</div></div>
+                <div class="metric-card warning" style="--primary-color:#f59e0b"><div class="label">黄灯/红灯占比</div><div class="value">24.9%</div><div class="change negative">↑ 1.8%</div></div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>随访完成率月度趋势</h3>
+                    <div id="followUpRate" class="chart"></div>
                 </div>
-                
-                <div class="metric-card" style="--primary-color: #10b981;">
-                    <div class="label">有效随访率</div>
-                    <div class="value">78.2%</div>
-                    <div class="change positive">↑ 1.8%</div>
+                <div class="chart-container">
+                    <h3>失访原因拆解</h3>
+                    <div id="lossReason" class="chart"></div>
                 </div>
-                
-                <div class="metric-card" style="--primary-color: #f59e0b;">
-                    <div class="label">失访率</div>
-                    <div class="value">12.5%</div>
-                    <div class="change negative">↓ 0.8%</div>
+                <div class="chart-container">
+                    <h3>AE 上报趋势与时效</h3>
+                    <div id="aeReport" class="chart"></div>
                 </div>
-                
-                <div class="metric-card" style="--primary-color: #8b5cf6;">
-                    <div class="label">患者脱落率</div>
-                    <div class="value">8.3%</div>
-                    <div class="change negative">↓ 0.5%</div>
+                <div class="chart-container">
+                    <h3>患者脱落率趋势</h3>
+                    <div id="dropoutRate" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>脱落原因占比</h3>
+                    <div id="dropoutReason" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>AE 不良反应分类</h3>
+                    <div id="aeType" class="chart"></div>
                 </div>
             </div>
-            
-            <div class="charts-grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
-                <div class="chart-container">
-                    <h3>随访率月度趋势</h3>
-                    <div id="followUpRateChart" class="chart"></div>
-                </div>
-                
-                <div class="chart-container">
-                    <h3>失访率月度趋势</h3>
-                    <div id="lossRateChart" class="chart"></div>
-                </div>
-                
-                <div class="chart-container">
-                    <h3>患者 AE 上报月度趋势</h3>
-                    <div id="aeReportChart" class="chart"></div>
-                </div>
-                
-                <div class="chart-container">
-                    <h3>患者脱落率月度趋势</h3>
-                    <div id="dropoutRateChart" class="chart"></div>
-                </div>
-                
-                <div class="chart-container">
-                    <h3>患者脱落原因占比</h3>
-                    <div id="dropoutReasonChart" class="chart"></div>
-                </div>
-                
-                <div class="chart-container">
-                    <h3>患者 AE 不良反应占比</h3>
-                    <div id="aeAdverseChart" class="chart"></div>
-                </div>
-            </div>
-            
-            <div class="footer">
-                <p>© 2026 患者关爱项目管理系统 · 专业版</p>
-            </div>
+
+            <div class="footer"><p>© 2026 君实随访项目管理系统 · BI 专业版</p></div>
         </div>
     </div>
 
-    
     <script>
-        window.onload = function() {
-            const commonTooltip = {
-                backgroundColor: 'rgba(30, 41, 59, 0.9)',
-                borderColor: 'rgba(255, 255, 255, 0.1)',
-                borderWidth: 1,
-                textStyle: { color: '#f1f5f9' },
-                backdropFilter: 'blur(4px)'
-            };
+    window.onload = function() {
+        const T = {backgroundColor:'rgba(30,41,59,0.9)',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,textStyle:{color:'#f1f5f9'}};
+        const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+        const ax = {axisLine:{lineStyle:{color:'rgba(255,255,255,0.1)'}},axisLabel:{color:'#94a3b8'}};
+        const sp = {splitLine:{lineStyle:{color:'rgba(255,255,255,0.05)',type:'dashed'}}};
+        const colors = ['#38bdf8','#10b981','#f59e0b','#f43f5e','#8b5cf6','#06b6d4'];
+        const instances = [];
 
-            const chartConfigs = [
-                { id: 'followUpRateChart', name: '随访率', color: '#38bdf8', type: 'line', area: true },
-                { id: 'lossRateChart', name: '失访率', color: '#f59e0b', type: 'line', area: true },
-                { id: 'dropoutRateChart', name: '脱落率', color: '#8b5cf6', type: 'line', area: true }
-            ];
+        // 随访完成率趋势
+        const c1=echarts.init(document.getElementById('followUpRate'));instances.push(c1);
+        c1.setOption({tooltip:{trigger:'axis',...T},grid:{left:'4%',right:'4%',bottom:'8%',top:'12%',containLabel:true},
+            xAxis:{type:'category',data:months,...ax},yAxis:{type:'value',axisLabel:{formatter:'{value}%',color:'#94a3b8'},...sp},
+            series:[
+                {name:'完成率',type:'line',smooth:true,data:[75.2,77.5,79.8,81.2,82.5,83.7,84.3,84.8,85.2,85.5,85.6,85.7],
+                    lineStyle:{width:3,color:'#38bdf8'},itemStyle:{color:'#38bdf8'},symbol:'circle',symbolSize:6,
+                    areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(56,189,248,0.2)'},{offset:1,color:'rgba(56,189,248,0)'}])}},
+                {name:'第3周期',type:'line',smooth:true,data:[52,54,56,57,59,60,62,63,64,65,65.5,65.8],lineStyle:{width:2,color:'#f59e0b'},itemStyle:{color:'#f59e0b'},symbol:'circle',symbolSize:5},
+                {name:'5周期',type:'line',smooth:true,data:[35,36,37,38,39,39.5,40,40.5,41,41.5,41.8,42.1],lineStyle:{width:2,color:'#8b5cf6'},itemStyle:{color:'#8b5cf6'},symbol:'circle',symbolSize:5}
+            ],legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0}
+        });
 
-            const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
-            const dataMap = {
-                followUpRateChart: [75.2, 77.5, 79.8, 81.2, 82.5, 83.7, 84.3, 84.8, 85.2, 85.5, 85.6, 85.7],
-                lossRateChart: [15.8, 15.2, 14.7, 14.2, 13.8, 13.5, 13.2, 12.9, 12.8, 12.7, 12.6, 12.5],
-                dropoutRateChart: [10.2, 10.0, 9.8, 9.5, 9.2, 9.0, 8.8, 8.6, 8.5, 8.4, 8.3, 8.3]
-            };
+        // 失访原因拆解
+        const c2=echarts.init(document.getElementById('lossReason'));instances.push(c2);
+        c2.setOption({tooltip:{trigger:'axis',...T},grid:{left:'4%',right:'4%',bottom:'8%',top:'12%',containLabel:true},
+            xAxis:{type:'category',data:months,...ax},yAxis:{type:'value',...ax,...sp},
+            legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
+            series:[
+                {name:'联系不上',type:'bar',stack:'loss',data:[8,7,7,6,6,5,5,5,4,4,4,3],itemStyle:{color:'#f43f5e'}},
+                {name:'拒绝随访',type:'bar',stack:'loss',data:[4,4,3,3,3,3,3,2,2,2,2,2],itemStyle:{color:'#f59e0b'}},
+                {name:'号码变更',type:'bar',stack:'loss',data:[3,3,3,3,2,2,2,2,2,2,2,2],itemStyle:{color:'#8b5cf6'}},
+                {name:'其他',type:'bar',stack:'loss',barWidth:'35%',data:[2,2,2,2,2,2,2,2,2,2,2,2],itemStyle:{color:'#94a3b8',borderRadius:[4,4,0,0]}}
+            ]
+        });
 
-            const instances = [];
+        // AE 上报趋势
+        const c3=echarts.init(document.getElementById('aeReport'));instances.push(c3);
+        c3.setOption({tooltip:{trigger:'axis',...T},grid:{left:'4%',right:'8%',bottom:'8%',top:'12%',containLabel:true},
+            legend:{textStyle:{color:'#94a3b8'},icon:'circle',top:0,right:0},
+            xAxis:{type:'category',data:months,...ax},
+            yAxis:[{type:'value',...ax,...sp},{type:'value',axisLabel:{formatter:'{value}h',color:'#94a3b8'},splitLine:{show:false}}],
+            series:[
+                {name:'上报量',type:'bar',barWidth:'35%',data:[12,15,18,14,16,19,22,20,18,16,14,12],
+                    itemStyle:{borderRadius:[4,4,0,0],color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#8b5cf6'},{offset:1,color:'rgba(139,92,246,0.1)'}])}},
+                {name:'平均时效',type:'line',yAxisIndex:1,smooth:true,data:[36,34,32,30,28,26,24,22,20,18,16,15],
+                    lineStyle:{width:2,color:'#f59e0b'},itemStyle:{color:'#f59e0b'},symbol:'circle',symbolSize:5}
+            ]
+        });
 
-            chartConfigs.forEach(config => {
-                const chart = echarts.init(document.getElementById(config.id));
-                instances.push(chart);
-                chart.setOption({
-                    tooltip: { trigger: 'axis', ...commonTooltip },
-                    grid: { left: '4%', right: '4%', bottom: '10%', top: '15%', containLabel: true },
-                    xAxis: {
-                        type: 'category', data: months,
-                        axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-                        axisLabel: { color: '#94a3b8' }
-                    },
-                    yAxis: {
-                        type: 'value', axisLabel: { formatter: '{value}%', color: '#94a3b8' },
-                        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)', type: 'dashed' } }
-                    },
-                    series: [{
-                        name: config.name, type: 'line', smooth: true, symbol: 'circle', symbolSize: 8,
-                        data: dataMap[config.id],
-                        lineStyle: { width: 3, color: config.color },
-                        itemStyle: { color: config.color, borderColor: '#fff', borderWidth: 2 },
-                        areaStyle: config.area ? {
-                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                                {offset: 0, color: config.color + '33'},
-                                {offset: 1, color: config.color + '00'}
-                            ])
-                        } : null
-                    }]
-                });
-            });
+        // 脱落率趋势
+        const c4=echarts.init(document.getElementById('dropoutRate'));instances.push(c4);
+        c4.setOption({tooltip:{trigger:'axis',...T},grid:{left:'4%',right:'4%',bottom:'8%',top:'12%',containLabel:true},
+            xAxis:{type:'category',data:months,...ax},yAxis:{type:'value',axisLabel:{formatter:'{value}%',color:'#94a3b8'},...sp},
+            series:[{name:'脱落率',type:'line',smooth:true,data:[10.2,10.0,9.8,9.5,9.2,9.0,8.8,8.6,8.5,8.4,8.3,8.3],
+                lineStyle:{width:3,color:'#8b5cf6'},itemStyle:{color:'#8b5cf6'},symbol:'circle',symbolSize:6,
+                areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(139,92,246,0.2)'},{offset:1,color:'rgba(139,92,246,0)'}])}}]
+        });
 
-            // AE 上报数量 (Bar)
-            const aeReportChart = echarts.init(document.getElementById('aeReportChart'));
-            instances.push(aeReportChart);
-            aeReportChart.setOption({
-                tooltip: { trigger: 'axis', ...commonTooltip },
-                grid: { left: '4%', right: '4%', bottom: '10%', top: '15%', containLabel: true },
-                xAxis: {
-                    type: 'category', data: months,
-                    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-                    axisLabel: { color: '#94a3b8' }
-                },
-                yAxis: {
-                    type: 'value', axisLabel: { color: '#94a3b8' },
-                    splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)', type: 'dashed' } }
-                },
-                series: [{
-                    name: 'AE上报数量', type: 'bar', barWidth: '40%',
-                    data: [12, 15, 18, 14, 16, 19, 22, 20, 18, 16, 14, 12],
-                    itemStyle: {
-                        borderRadius: [4, 4, 0, 0],
-                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                            {offset: 0, color: '#8b5cf6'},
-                            {offset: 1, color: 'rgba(139, 92, 246, 0.1)'}
-                        ])
-                    }
-                }]
-            });
+        // 脱落原因饼图
+        const c5=echarts.init(document.getElementById('dropoutReason'));instances.push(c5);
+        c5.setOption({tooltip:{trigger:'item',...T},legend:{bottom:0,textStyle:{color:'#94a3b8'},icon:'circle'},
+            series:[{type:'pie',radius:['40%','65%'],center:['50%','45%'],avoidLabelOverlap:false,
+                itemStyle:{borderRadius:8,borderColor:'#1e293b',borderWidth:3},label:{show:false},
+                data:[
+                    {value:35,name:'不良反应',itemStyle:{color:'#f43f5e'}},{value:25,name:'疗效不佳',itemStyle:{color:'#f59e0b'}},
+                    {value:20,name:'经济原因',itemStyle:{color:'#38bdf8'}},{value:15,name:'其他',itemStyle:{color:'#8b5cf6'}},{value:5,name:'失访',itemStyle:{color:'#94a3b8'}}
+                ]}]
+        });
 
-            // 两个饼图
-            const pieConfigs = [
-                { id: 'dropoutReasonChart', name: '脱落原因', data: [
-                    {value: 35, name: '不良反应'}, {value: 25, name: '疗效不佳'},
-                    {value: 20, name: '经济原因'}, {value: 15, name: '其他原因'}, {value: 5, name: '失访'}
-                ]},
-                { id: 'aeAdverseChart', name: '不良反应', data: [
-                    {value: 30, name: '消化系统'}, {value: 25, name: '皮肤反应'},
-                    {value: 20, name: '神经系统'}, {value: 15, name: '心血管系统'}, {value: 10, name: '其他'}
-                ]}
-            ];
+        // AE不良反应分类
+        const c6=echarts.init(document.getElementById('aeType'));instances.push(c6);
+        c6.setOption({tooltip:{trigger:'item',...T},legend:{bottom:0,textStyle:{color:'#94a3b8'},icon:'circle'},
+            series:[{type:'pie',radius:['40%','65%'],center:['50%','45%'],avoidLabelOverlap:false,
+                itemStyle:{borderRadius:8,borderColor:'#1e293b',borderWidth:3},label:{show:false},
+                data:[
+                    {value:30,name:'免疫相关反应',itemStyle:{color:'#38bdf8'}},{value:22,name:'皮肤反应',itemStyle:{color:'#10b981'}},
+                    {value:18,name:'消化系统',itemStyle:{color:'#f59e0b'}},{value:15,name:'甲状腺异常',itemStyle:{color:'#8b5cf6'}},
+                    {value:10,name:'肝功能异常',itemStyle:{color:'#f43f5e'}},{value:5,name:'其他',itemStyle:{color:'#06b6d4'}}
+                ]}]
+        });
 
-            const colors = ['#38bdf8', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6'];
-
-            pieConfigs.forEach(config => {
-                const chart = echarts.init(document.getElementById(config.id));
-                instances.push(chart);
-                chart.setOption({
-                    tooltip: { trigger: 'item', ...commonTooltip },
-                    legend: { bottom: '0', textStyle: { color: '#94a3b8' }, icon: 'circle' },
-                    series: [{
-                        name: config.name, type: 'pie', radius: ['40%', '60%'], center: ['50%', '45%'],
-                        avoidLabelOverlap: false,
-                        itemStyle: { borderRadius: 8, borderColor: '#1e293b', borderWidth: 2 },
-                        label: { show: false },
-                        data: config.data.map((d, i) => ({ ...d, itemStyle: { color: colors[i % colors.length] } }))
-                    }]
-                });
-            });
-
-            window.addEventListener('resize', () => instances.forEach(i => i.resize()));
-        };
+        window.addEventListener('resize',()=>instances.forEach(i=>i.resize()));
+    };
     </script>
 </body>
 </html>
