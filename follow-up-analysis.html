@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>患者关爱项目 - 随访分析</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.12.8/dist/reset.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 200px;
+            background-color: #fff;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+        }
+        
+        .sidebar h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1890ff;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 20px;
+        }
+        
+        .menu {
+            list-style: none;
+        }
+        
+        .menu-item {
+            margin-bottom: 8px;
+        }
+        
+        .menu-item a {
+            display: block;
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .menu-item a:hover {
+            color: #1890ff;
+            background-color: #f0f7ff;
+        }
+        
+        .menu-item.active a {
+            color: #1890ff;
+            background-color: #e6f7ff;
+            border-left-color: #1890ff;
+            font-weight: 500;
+        }
+        
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .header {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex: 0 0 auto;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1890ff;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            flex: 0 0 auto;
+        }
+        
+        .metric-card {
+            background-color: #fff;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .metric-card .label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .metric-card .value {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #1890ff;
+        }
+        
+        .metric-card .change {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .metric-card .change.positive {
+            color: #f5222d;
+        }
+        
+        .metric-card .change.negative {
+            color: #52c41a;
+        }
+        
+        .metric-card.completion-rate {
+            border-left: 4px solid #1890ff;
+        }
+        
+        .metric-card.effective-rate {
+            border-left: 4px solid #52c41a;
+        }
+        
+        .metric-card.loss-rate {
+            border-left: 4px solid #faad14;
+        }
+        
+        .metric-card.dropout-rate {
+            border-left: 4px solid #722ed1;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            flex: 1;
+            min-height: 350px;
+        }
+        
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .chart-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .chart-container h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            flex: 0 0 auto;
+        }
+        
+        .chart {
+            flex: 1;
+            min-height: 300px;
+        }
+        
+        .footer {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            padding: 20px 0;
+            flex: 0 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>患者关爱系统</h2>
+        <ul class="menu">
+            <li class="menu-item">
+                <a href="dashboard.html">首页</a>
+            </li>
+            <li class="menu-item">
+                <a href="patient-analysis.html">患者分析</a>
+            </li>
+            <li class="menu-item active">
+                <a href="follow-up-analysis.html">随访分析</a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="main-content">
+        <div class="container">
+            <div class="header">
+                <h1>随访分析</h1>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card completion-rate">
+                    <div class="label">随访完成率</div>
+                    <div class="value">85.7%</div>
+                    <div class="change positive">+2.3%</div>
+                </div>
+                
+                <div class="metric-card effective-rate">
+                    <div class="label">有效随访率</div>
+                    <div class="value">78.2%</div>
+                    <div class="change positive">+1.8%</div>
+                </div>
+                
+                <div class="metric-card loss-rate">
+                    <div class="label">失访率</div>
+                    <div class="value">12.5%</div>
+                    <div class="change negative">-0.8%</div>
+                </div>
+                
+                <div class="metric-card dropout-rate">
+                    <div class="label">患者脱落率</div>
+                    <div class="value">8.3%</div>
+                    <div class="change negative">-0.5%</div>
+                </div>
+            </div>
+            
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>随访率月度趋势</h3>
+                    <div id="followUpRateChart" class="chart"></div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>失访率月度趋势</h3>
+                    <div id="lossRateChart" class="chart"></div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>患者AE上报月度趋势</h3>
+                    <div id="aeReportChart" class="chart"></div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>患者脱落率月度趋势</h3>
+                    <div id="dropoutRateChart" class="chart"></div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>患者脱落原因占比</h3>
+                    <div id="dropoutReasonChart" class="chart"></div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>患者AE不良反应占比</h3>
+                    <div id="aeAdverseChart" class="chart"></div>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <p>© 2026 患者关爱项目管理系统</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 初始化图表
+        window.onload = function() {
+            // 随访率月度趋势图
+            const followUpRateChart = echarts.init(document.getElementById('followUpRateChart'));
+            const followUpRateOption = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'line',
+                        lineStyle: {
+                            color: 'rgba(24, 144, 255, 0.5)'
+                        }
+                    },
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    borderColor: '#1890ff',
+                    borderWidth: 1,
+                    textStyle: {
+                        color: '#333'
+                    }
+                },
+                legend: {
+                    data: ['随访率'],
+                    textStyle: {
+                        color: '#666'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    top: '15%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                    axisLine: {
+                        lineStyle: {
+                            color: '#e8e8e8'
+                        }
+                    },
+                    axisLabel: {
+                        color: '#666',
+                        fontSize: 12,
+                        rotate: 45
+                    },
+                    axisTick: {
+                        alignWithLabel: true
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value}%',
+                        color: '#666',
+                        fontSize: 12
+                    },
+                    axisLine: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: '#f0f0f0',
+                            type: 'dashed'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: '随访率',
+                        type: 'line',
+                        data: [75.2, 77.5, 79.8, 81.2, 82.5, 83.7, 84.3, 84.8, 85.2, 85.5, 85.6, 85.7],
+                        smooth: true,
+                        symbol: 'circle',
+                        symbolSize: 8,
+                        lineStyle: {
+                            color: '#1890ff',
+                            width: 3
+                        },
+                        itemStyle: {
+                            color: '#1890ff',
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {offset: 0, color: 'rgba(24, 144, 255, 0.3)'},
+                                {offset: 1, color: 'rgba(24, 144, 255, 0.1)'}
+                            ])
+                        },
+                        animation: true,
+                        animationDuration: 1000,
+                        animationEasing: 'cubicOut'
+                    }
+                ]
+            };
+            followUpRateChart.setOption(followUpRateOption);
+            
+            // 失访率月度趋势图
+            const lossRateChart = echarts.init(document.getElementById('lossRateChart'));
+            const lossRateOption = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'line',
+                        lineStyle: {
+                            color: 'rgba(250, 173, 20, 0.5)'
+                        }
+                    },
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    borderColor: '#faad14',
+                    borderWidth: 1,
+                    textStyle: {
+                        color: '#333'
+                    }
+                },
+                legend: {
+                    data: ['失访率'],
+                    textStyle: {
+                        color: '#666'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    top: '15%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                    axisLine: {
+                        lineStyle: {
+                            color: '#e8e8e8'
+                        }
+                    },
+                    axisLabel: {
+                        color: '#666',
+                        fontSize: 12,
+                        rotate: 45
+                    },
+                    axisTick: {
+                        alignWithLabel: true
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value}%',
+                        color: '#666',
+                        fontSize: 12
+                    },
+                    axisLine: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: '#f0f0f0',
+                            type: 'dashed'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: '失访率',
+                        type: 'line',
+                        data: [15.8, 15.2, 14.7, 14.2, 13.8, 13.5, 13.2, 12.9, 12.8, 12.7, 12.6, 12.5],
+                        smooth: true,
+                        symbol: 'circle',
+                        symbolSize: 8,
+                        lineStyle: {
+                            color: '#faad14',
+                            width: 3
+                        },
+                        itemStyle: {
+                            color: '#faad14',
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {offset: 0, color: 'rgba(250, 173, 20, 0.3)'},
+                                {offset: 1, color: 'rgba(250, 173, 20, 0.1)'}
+                            ])
+                        },
+                        animation: true,
+                        animationDuration: 1000,
+                        animationEasing: 'cubicOut'
+                    }
+                ]
+            };
+            lossRateChart.setOption(lossRateOption);
+            
+            // 患者AE上报月度趋势图
+            const aeReportChart = echarts.init(document.getElementById('aeReportChart'));
+            const aeReportOption = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow',
+                        shadowStyle: {
+                            color: 'rgba(24, 144, 255, 0.1)'
+                        }
+                    },
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    borderColor: '#1890ff',
+                    borderWidth: 1,
+                    textStyle: {
+                        color: '#333'
+                    }
+                },
+                legend: {
+                    data: ['AE上报数量'],
+                    textStyle: {
+                        color: '#666'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    top: '15%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                    axisLine: {
+                        lineStyle: {
+                            color: '#e8e8e8'
+                        }
+                    },
+                    axisLabel: {
+                        color: '#666',
+                        fontSize: 12,
+                        rotate: 45
+                    },
+                    axisTick: {
+                        alignWithLabel: true
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        color: '#666',
+                        fontSize: 12
+                    },
+                    axisLine: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: '#f0f0f0',
+                            type: 'dashed'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: 'AE上报数量',
+                        type: 'bar',
+                        data: [12, 15, 18, 14, 16, 19, 22, 20, 18, 16, 14, 12],
+                        barWidth: '60%',
+                        barRadius: [8, 8, 0, 0],
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {offset: 0, color: '#722ed1'},
+                                {offset: 1, color: '#b37feb'}
+                            ]),
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowOffsetY: 2,
+                            shadowColor: 'rgba(114, 46, 209, 0.3)'
+                        },
+                        label: {
+                            show: true,
+                            position: 'top',
+                            color: '#722ed1',
+                            fontSize: 12,
+                            fontWeight: 'bold'
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                    {offset: 0, color: '#531dab'},
+                                    {offset: 1, color: '#9254de'}
+                                ])
+                            }
+                        },
+                        animation: true,
+                        animationDuration: 1000,
+                        animationEasing: 'cubicOut'
+                    }
+                ]
+            };
+            aeReportChart.setOption(aeReportOption);
+            
+            // 患者脱落率月度趋势图
+            const dropoutRateChart = echarts.init(document.getElementById('dropoutRateChart'));
+            const dropoutRateOption = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'line',
+                        lineStyle: {
+                            color: 'rgba(114, 46, 209, 0.5)'
+                        }
+                    },
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    borderColor: '#722ed1',
+                    borderWidth: 1,
+                    textStyle: {
+                        color: '#333'
+                    }
+                },
+                legend: {
+                    data: ['脱落率'],
+                    textStyle: {
+                        color: '#666'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    top: '15%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                    axisLine: {
+                        lineStyle: {
+                            color: '#e8e8e8'
+                        }
+                    },
+                    axisLabel: {
+                        color: '#666',
+                        fontSize: 12,
+                        rotate: 45
+                    },
+                    axisTick: {
+                        alignWithLabel: true
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value}%',
+                        color: '#666',
+                        fontSize: 12
+                    },
+                    axisLine: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: '#f0f0f0',
+                            type: 'dashed'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: '脱落率',
+                        type: 'line',
+                        data: [10.2, 10.0, 9.8, 9.5, 9.2, 9.0, 8.8, 8.6, 8.5, 8.4, 8.3, 8.3],
+                        smooth: true,
+                        symbol: 'circle',
+                        symbolSize: 8,
+                        lineStyle: {
+                            color: '#722ed1',
+                            width: 3
+                        },
+                        itemStyle: {
+                            color: '#722ed1',
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {offset: 0, color: 'rgba(114, 46, 209, 0.3)'},
+                                {offset: 1, color: 'rgba(114, 46, 209, 0.1)'}
+                            ])
+                        },
+                        animation: true,
+                        animationDuration: 1000,
+                        animationEasing: 'cubicOut'
+                    }
+                ]
+            };
+            dropoutRateChart.setOption(dropoutRateOption);
+            
+            // 患者脱落原因占比饼图
+            const dropoutReasonChart = echarts.init(document.getElementById('dropoutReasonChart'));
+            const dropoutReasonOption = {
+                tooltip: {
+                    trigger: 'item',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    borderColor: '#1890ff',
+                    borderWidth: 1,
+                    textStyle: {
+                        color: '#333'
+                    }
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    textStyle: {
+                        color: '#666'
+                    }
+                },
+                series: [
+                    {
+                        name: '脱落原因',
+                        type: 'pie',
+                        radius: '60%',
+                        center: ['50%', '50%'],
+                        data: [
+                            {value: 35, name: '不良反应'}, 
+                            {value: 25, name: '疗效不佳'},
+                            {value: 20, name: '经济原因'},
+                            {value: 15, name: '其他原因'},
+                            {value: 5, name: '失访'}
+                        ],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        },
+                        animation: true,
+                        animationDuration: 1000,
+                        animationEasing: 'cubicOut'
+                    }
+                ]
+            };
+            dropoutReasonChart.setOption(dropoutReasonOption);
+            
+            // 患者AE不良反应占比饼图
+            const aeAdverseChart = echarts.init(document.getElementById('aeAdverseChart'));
+            const aeAdverseOption = {
+                tooltip: {
+                    trigger: 'item',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    borderColor: '#1890ff',
+                    borderWidth: 1,
+                    textStyle: {
+                        color: '#333'
+                    }
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    textStyle: {
+                        color: '#666'
+                    }
+                },
+                series: [
+                    {
+                        name: '不良反应',
+                        type: 'pie',
+                        radius: '60%',
+                        center: ['50%', '50%'],
+                        data: [
+                            {value: 30, name: '消化系统反应'},
+                            {value: 25, name: '皮肤反应'},
+                            {value: 20, name: '神经系统反应'},
+                            {value: 15, name: '心血管系统反应'},
+                            {value: 10, name: '其他反应'}
+                        ],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        },
+                        animation: true,
+                        animationDuration: 1000,
+                        animationEasing: 'cubicOut'
+                    }
+                ]
+            };
+            aeAdverseChart.setOption(aeAdverseOption);
+            
+            // 响应式调整
+            window.addEventListener('resize', function() {
+                followUpRateChart.resize();
+                lossRateChart.resize();
+                aeReportChart.resize();
+                dropoutRateChart.resize();
+                dropoutReasonChart.resize();
+                aeAdverseChart.resize();
+            });
+        };
+    </script>
+</body>
+</html>
