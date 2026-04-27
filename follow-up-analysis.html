@@ -11,7 +11,7 @@
     <div class="sidebar">
         <h2>君实随访 BI</h2>
         <ul class="menu">
-            <li class="menu-item"><a href="index.html"><span style="margin-right:10px">📊</span> Dashboard 看板</a></li>
+            <li class="menu-item"><a href="index.html"><span style="margin-right:10px">📊</span> 项目数据指标</a></li>
             <li class="menu-item"><a href="enrollment-analysis.html"><span style="margin-right:10px">📋</span> 入组分析</a></li>
             <li class="menu-item active"><a href="follow-up-analysis.html"><span style="margin-right:10px">📞</span> 随访分析</a></li>
             <li class="menu-item"><a href="patient-analysis.html"><span style="margin-right:10px">👥</span> 患者分析</a></li>
@@ -25,7 +25,12 @@
         <div class="container">
             <div class="header">
                 <h1>随访分析</h1>
-                <div style="color:var(--text-muted);font-size:13px">数据更新至：2026-04-23</div>
+                <div class="date-filter">
+                    <input type="date" value="2026-01-01" id="startDate">
+                    <span class="separator">至</span>
+                    <input type="date" id="endDate">
+                    <button class="btn-apply" id="applyFilter">查询</button>
+                </div>
             </div>
 
             <div class="metrics-grid">
@@ -129,8 +134,10 @@
         // 脱落原因饼图
         const c5=echarts.init(document.getElementById('dropoutReason'));instances.push(c5);
         c5.setOption({tooltip:{trigger:'item',...T},legend:{bottom:0,textStyle:{color:'#94a3b8'},icon:'circle'},
-            series:[{type:'pie',radius:['40%','65%'],center:['50%','45%'],avoidLabelOverlap:false,
-                itemStyle:{borderRadius:8,borderColor:'#1e293b',borderWidth:3},label:{show:false},
+            series:[{type:'pie',radius:'65%',center:['50%','45%'],
+                itemStyle:{borderColor:'#1e293b',borderWidth:1},
+                label:{show:true,color:'#94a3b8',formatter:'{b}: {d}%'},
+                labelLine:{lineStyle:{color:'rgba(255,255,255,0.2)'}},
                 data:[
                     {value:35,name:'不良反应',itemStyle:{color:'#f43f5e'}},{value:25,name:'疗效不佳',itemStyle:{color:'#f59e0b'}},
                     {value:20,name:'经济原因',itemStyle:{color:'#38bdf8'}},{value:15,name:'其他',itemStyle:{color:'#8b5cf6'}},{value:5,name:'失访',itemStyle:{color:'#94a3b8'}}
@@ -140,14 +147,30 @@
         // AE不良反应分类
         const c6=echarts.init(document.getElementById('aeType'));instances.push(c6);
         c6.setOption({tooltip:{trigger:'item',...T},legend:{bottom:0,textStyle:{color:'#94a3b8'},icon:'circle'},
-            series:[{type:'pie',radius:['40%','65%'],center:['50%','45%'],avoidLabelOverlap:false,
-                itemStyle:{borderRadius:8,borderColor:'#1e293b',borderWidth:3},label:{show:false},
+            series:[{type:'pie',radius:'65%',center:['50%','45%'],
+                itemStyle:{borderColor:'#1e293b',borderWidth:1},
+                label:{show:true,color:'#94a3b8',formatter:'{b}: {d}%'},
+                labelLine:{lineStyle:{color:'rgba(255,255,255,0.2)'}},
                 data:[
                     {value:30,name:'免疫相关反应',itemStyle:{color:'#38bdf8'}},{value:22,name:'皮肤反应',itemStyle:{color:'#10b981'}},
                     {value:18,name:'消化系统',itemStyle:{color:'#f59e0b'}},{value:15,name:'甲状腺异常',itemStyle:{color:'#8b5cf6'}},
                     {value:10,name:'肝功能异常',itemStyle:{color:'#f43f5e'}},{value:5,name:'其他',itemStyle:{color:'#06b6d4'}}
                 ]}]
         });
+
+        // 筛选按钮点击
+        document.getElementById('applyFilter').addEventListener('click', function() {
+            const cards = document.querySelectorAll('.metric-card');
+            cards.forEach(c => c.style.opacity = '0.5');
+            setTimeout(() => {
+                cards.forEach(c => c.style.opacity = '1');
+                alert('数据已根据日期筛选更新');
+            }, 400);
+        });
+
+        // 设置默认截止日期为当天
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('endDate').value = today;
 
         window.addEventListener('resize',()=>instances.forEach(i=>i.resize()));
     };

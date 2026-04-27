@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard 看板 - 君实随访 BI</title>
+    <title>项目数据指标 - 君实随访 BI</title>
     <link rel="stylesheet" href="design-system.css">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 </head>
@@ -11,7 +11,7 @@
     <div class="sidebar">
         <h2>君实随访 BI</h2>
         <ul class="menu">
-            <li class="menu-item active"><a href="index.html"><span style="margin-right:10px">📊</span> Dashboard 看板</a></li>
+            <li class="menu-item active"><a href="index.html"><span style="margin-right:10px">📊</span> 项目数据指标</a></li>
             <li class="menu-item"><a href="enrollment-analysis.html"><span style="margin-right:10px">📋</span> 入组分析</a></li>
             <li class="menu-item"><a href="follow-up-analysis.html"><span style="margin-right:10px">📞</span> 随访分析</a></li>
             <li class="menu-item"><a href="patient-analysis.html"><span style="margin-right:10px">👥</span> 患者分析</a></li>
@@ -24,11 +24,12 @@
     <div class="main-content">
         <div class="container">
             <div class="header">
-                <h1>Dashboard 看板</h1>
-                <div class="tab-bar">
-                    <button class="tab active">月</button>
-                    <button class="tab">周</button>
-                    <button class="tab">日</button>
+                <h1>项目数据指标</h1>
+                <div class="date-filter">
+                    <input type="date" value="2026-01-01" id="startDate">
+                    <span class="separator">至</span>
+                    <input type="date" id="endDate">
+                    <button class="btn-apply" id="applyFilter">查询</button>
                 </div>
             </div>
 
@@ -190,9 +191,10 @@
             // 饼图
             c2.setOption({
                 tooltip:{trigger:'item',...T}, legend:{bottom:0,textStyle:{color:'#94a3b8'},icon:'circle'},
-                series:[{type:'pie',radius:['45%','70%'],center:['50%','45%'],avoidLabelOverlap:false,
-                    itemStyle:{borderRadius:8,borderColor:'#1e293b',borderWidth:3},label:{show:false},
-                    emphasis:{label:{show:true,fontSize:16,fontWeight:'bold',color:'#f1f5f9'}},
+                series:[{type:'pie',radius:'65%',center:['50%','45%'],
+                    itemStyle:{borderColor:'#1e293b',borderWidth:1},
+                    label:{show:true,color:'#94a3b8',formatter:'{b}: {d}%'},
+                    labelLine:{lineStyle:{color:'rgba(255,255,255,0.2)'}},
                     data:d.pie.map((p,i)=>({value:p.v,name:p.n,itemStyle:{color:pieColors[i]}}))
                 }]
             }, true);
@@ -226,15 +228,24 @@
             }, true);
         }
 
-        // Tab 切换
-        const tabs = document.querySelectorAll('.tab-bar .tab');
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                tabs.forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                renderAll(this.textContent.trim());
-            });
+        // 筛选按钮点击
+        document.getElementById('applyFilter').addEventListener('click', function() {
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+            console.log('Filtering from', start, 'to', end);
+            
+            // 模拟加载效果
+            const cards = document.querySelectorAll('.metric-card');
+            cards.forEach(c => c.style.opacity = '0.5');
+            setTimeout(() => {
+                renderAll('月'); // 重新渲染（模拟数据更新）
+                cards.forEach(c => c.style.opacity = '1');
+            }, 400);
         });
+
+        // 设置默认截止日期为当天
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('endDate').value = today;
 
         // 初始渲染
         renderAll('月');

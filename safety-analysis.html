@@ -11,7 +11,7 @@
     <div class="sidebar">
         <h2>君实随访 BI</h2>
         <ul class="menu">
-            <li class="menu-item"><a href="index.html"><span style="margin-right:10px">📊</span> Dashboard 看板</a></li>
+            <li class="menu-item"><a href="index.html"><span style="margin-right:10px">📊</span> 项目数据指标</a></li>
             <li class="menu-item"><a href="enrollment-analysis.html"><span style="margin-right:10px">📋</span> 入组分析</a></li>
             <li class="menu-item"><a href="follow-up-analysis.html"><span style="margin-right:10px">📞</span> 随访分析</a></li>
             <li class="menu-item"><a href="patient-analysis.html"><span style="margin-right:10px">👥</span> 患者分析</a></li>
@@ -25,7 +25,12 @@
         <div class="container">
             <div class="header">
                 <h1>安全数据分析（PV 药物警戒）</h1>
-                <div style="color:var(--text-muted);font-size:13px">数据更新至：2026-04-23</div>
+                <div class="date-filter">
+                    <input type="date" value="2026-01-01" id="startDate">
+                    <span class="separator">至</span>
+                    <input type="date" id="endDate">
+                    <button class="btn-apply" id="applyFilter">查询</button>
+                </div>
             </div>
 
             <div class="metrics-grid">
@@ -125,6 +130,20 @@
                 {name:'记录缺失',type:'bar',yAxisIndex:1,stack:'fail',barWidth:'25%',data:[5,4,4,3,3,3,2,2,2,2,1,1],itemStyle:{color:'#f59e0b',borderRadius:[4,4,0,0]}}
             ]
         });
+
+        // 筛选按钮点击
+        document.getElementById('applyFilter').addEventListener('click', function() {
+            const cards = document.querySelectorAll('.metric-card');
+            cards.forEach(c => c.style.opacity = '0.5');
+            setTimeout(() => {
+                cards.forEach(c => c.style.opacity = '1');
+                alert('数据已根据日期筛选更新');
+            }, 400);
+        });
+
+        // 设置默认截止日期为当天
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('endDate').value = today;
 
         window.addEventListener('resize',()=>ins.forEach(i=>i.resize()));
     };

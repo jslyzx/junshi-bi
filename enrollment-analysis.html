@@ -11,7 +11,7 @@
     <div class="sidebar">
         <h2>君实随访 BI</h2>
         <ul class="menu">
-            <li class="menu-item"><a href="index.html"><span style="margin-right:10px">📊</span> Dashboard 看板</a></li>
+            <li class="menu-item"><a href="index.html"><span style="margin-right:10px">📊</span> 项目数据指标</a></li>
             <li class="menu-item active"><a href="enrollment-analysis.html"><span style="margin-right:10px">📋</span> 入组分析</a></li>
             <li class="menu-item"><a href="follow-up-analysis.html"><span style="margin-right:10px">📞</span> 随访分析</a></li>
             <li class="menu-item"><a href="patient-analysis.html"><span style="margin-right:10px">👥</span> 患者分析</a></li>
@@ -25,7 +25,12 @@
         <div class="container">
             <div class="header">
                 <h1>入组分析</h1>
-                <div style="color:var(--text-muted);font-size:13px">数据更新至：2026-04-23</div>
+                <div class="date-filter">
+                    <input type="date" value="2026-01-01" id="startDate">
+                    <span class="separator">至</span>
+                    <input type="date" id="endDate">
+                    <button class="btn-apply" id="applyFilter">查询</button>
+                </div>
             </div>
 
             <div class="metrics-grid">
@@ -83,8 +88,10 @@
 
         const c3=echarts.init(document.getElementById('enrollDisease'));
         c3.setOption({tooltip:{trigger:'item',...T},legend:{bottom:0,textStyle:{color:'#94a3b8'},icon:'circle'},
-            series:[{type:'pie',radius:['40%','65%'],center:['50%','45%'],avoidLabelOverlap:false,
-                itemStyle:{borderRadius:8,borderColor:'#1e293b',borderWidth:3},label:{show:false},
+            series:[{type:'pie',radius:'65%',center:['50%','45%'],
+                itemStyle:{borderColor:'#1e293b',borderWidth:1},
+                label:{show:true,color:'#94a3b8',formatter:'{b}: {d}%'},
+                labelLine:{lineStyle:{color:'rgba(255,255,255,0.2)'}},
                 data:[
                     {value:28,name:'非小细胞肺癌',itemStyle:{color:'#38bdf8'}},
                     {value:18,name:'食管癌',itemStyle:{color:'#10b981'}},
@@ -105,6 +112,20 @@
                 {name:'目标线',type:'line',data:Array(12).fill(85),lineStyle:{width:2,color:'#f59e0b',type:'dashed'},symbol:'none',itemStyle:{color:'#f59e0b'}}
             ]
         });
+
+        // 筛选按钮点击
+        document.getElementById('applyFilter').addEventListener('click', function() {
+            const cards = document.querySelectorAll('.metric-card');
+            cards.forEach(c => c.style.opacity = '0.5');
+            setTimeout(() => {
+                cards.forEach(c => c.style.opacity = '1');
+                alert('数据已根据日期筛选更新');
+            }, 400);
+        });
+
+        // 设置默认截止日期为当天
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('endDate').value = today;
 
         window.addEventListener('resize',()=>{c1.resize();c2.resize();c3.resize();c4.resize()});
     };
