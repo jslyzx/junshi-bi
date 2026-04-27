@@ -54,8 +54,8 @@
                     <div id="satisfaction" class="chart"></div>
                 </div>
                 <div class="chart-container">
-                    <h3>服务异常类型占比</h3>
-                    <div id="abnormalType" class="chart"></div>
+                    <h3>满意度多维度对比</h3>
+                    <div id="satisfactionDimension" class="chart"></div>
                 </div>
             </div>
 
@@ -111,20 +111,20 @@
                 label:{show:true,position:'right',color:'#94a3b8',formatter:'{c}人'}}]
         });
 
-        // 异常类型占比
-        const c4=echarts.init(document.getElementById('abnormalType'));ins.push(c4);
-        c4.setOption({tooltip:{trigger:'item',...T},legend:{bottom:0,textStyle:{color:'#94a3b8'},icon:'circle'},
-            series:[{type:'pie',radius:'65%',center:['50%','45%'],
-                itemStyle:{borderColor:'#1e293b',borderWidth:1},
-                label:{show:true,color:'#94a3b8',formatter:'{b}: {d}%'},
-                labelLine:{lineStyle:{color:'rgba(255,255,255,0.2)'}},
-                data:[
-                    {value:35,name:'响应超时',itemStyle:{color:'#f43f5e'}},
-                    {value:25,name:'信息录入错误',itemStyle:{color:'#f59e0b'}},
-                    {value:20,name:'服务中断',itemStyle:{color:'#8b5cf6'}},
-                    {value:12,name:'沟通不畅',itemStyle:{color:'#38bdf8'}},
-                    {value:8,name:'其他',itemStyle:{color:'#94a3b8'}}
-                ]}]
+        // 满意度多维度对比
+        const c4=echarts.init(document.getElementById('satisfactionDimension'));ins.push(c4);
+        c4.setOption({
+            tooltip:{trigger:'axis',...T},
+            legend:{bottom:0,textStyle:{color:'#94a3b8'},icon:'circle'},
+            radar:{indicator:[
+                {name:'专员专业度',max:5},{name:'随访及时性',max:5},{name:'态度礼貌',max:5},
+                {name:'问题解决率',max:5},{name:'关怀感',max:5}
+            ],axisName:{color:'#94a3b8',fontSize:11},splitArea:{areaStyle:{color:['rgba(56,189,248,0.02)','rgba(56,189,248,0.04)']}},
+            splitLine:{lineStyle:{color:'rgba(255,255,255,0.08)'}},axisLine:{lineStyle:{color:'rgba(255,255,255,0.08)'}}},
+            series:[{type:'radar',data:[
+                {value:[4.8,4.7,4.9,4.6,4.8],name:'本期',areaStyle:{color:'rgba(56,189,248,0.2)'},lineStyle:{color:'#38bdf8',width:2},itemStyle:{color:'#38bdf8'}},
+                {value:[4.5,4.4,4.7,4.3,4.5],name:'上期',lineStyle:{color:'#94a3b8',width:1,type:'dashed'},itemStyle:{color:'#94a3b8'}}
+            ]}]
         });
 
         // 筛选按钮点击
